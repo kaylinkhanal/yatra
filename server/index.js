@@ -35,14 +35,14 @@ app.put('/products/:id', async(req, res) => {
  })
 
  app.delete('/products/:id', async(req, res) => {
-  await Products.findByIdAndDelete(req.params.id)
+   await Products.findByIdAndDelete(req.params.id)
  })
 
- app.get('/products', async(req, res) => {
-  const data = await Products.find()
- })
+ app.get('/products', async(req, res) => { 
+    const data = await Products.find()
+})
 
- 
+
  app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
   })
