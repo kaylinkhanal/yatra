@@ -1,0 +1,4 @@
+{
+    "MONGODB_DATABASE_NAME": "yatra",
+    "MONGODB_CONNECTION_URI": "mongodb://localhost:27017"
+}
