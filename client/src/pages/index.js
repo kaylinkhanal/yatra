@@ -15,7 +15,6 @@ export default function index() {
                     <input type='text' placeholder='Drop off address'/>
                   </form>
                 <div className='btn'>
-                  
                   <a href='/login' >Request now</a>
                 </div>
             </div>
