@@ -1,10 +1,14 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import { useRouter } from 'next/navigation'
+import { Button, message } from 'antd';
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 const Register = () => {
-    const SignupSchema = Yup.object().shape({
+      const router = useRouter()
+      const [msg, contextHolder] = message.useMessage();   
+       const SignupSchema = Yup.object().shape({
       fullName: Yup.string()
           .min(2, 'Too Short!')
           .max(50, 'Too Long!')
@@ -29,12 +33,18 @@ const Register = () => {
       };
       const res = await fetch('http://localhost:4000/register',requestOptions)
       const data = await res.json()
-      if(data) {
-        alert(data.msg)
+      if(data && res.status==200) {  
+        router.push('/')
+        setTimeout(() => {
+              msg.info(data.msg);
+        }, 2000);
+      }else{
+        msg.info(res.statusText);
       }
       }
     return(
         <>
+      {contextHolder}
         <Header/>
       <div className='container'> 
       <div className="app--login">
