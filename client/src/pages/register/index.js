@@ -33,13 +33,13 @@ const Register = () => {
       };
       const res = await fetch('http://localhost:4000/register',requestOptions)
       const data = await res.json()
-      if(data) {
-    
-
+      if(data && res.status==200) {  
         router.push('/')
         setTimeout(() => {
-          msg.info(data.msg);
+              msg.info(data.msg);
         }, 2000);
+      }else{
+        msg.info(res.statusText);
       }
       }
     return(
