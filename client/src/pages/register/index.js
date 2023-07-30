@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation'
 import { Button, message } from 'antd';
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import { setUserDetails } from '@/redux/reducerSlice/users';
+import { useDispatch } from 'react-redux';
+
 const Register = () => {
       const router = useRouter()
+      const dispatch = useDispatch()
       const [msg, contextHolder] = message.useMessage();   
        const SignupSchema = Yup.object().shape({
       fullName: Yup.string()
@@ -33,7 +37,9 @@ const Register = () => {
       };
       const res = await fetch('http://localhost:4000/register',requestOptions)
       const data = await res.json()
-      if(data && res.status==200) {  
+      if(data && res.status==200) { 
+        
+        dispatch(setUserDetails(data))
         router.push('/')
         setTimeout(() => {
               msg.info(data.msg);

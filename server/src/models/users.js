@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {type:String, required: true},
     email: String,
     password: String,
-    mode: {type: String, default: 'User'},
+    mode: {type: String, default: 'Passenger'},
     vehicleDetails: Object
   });
   
