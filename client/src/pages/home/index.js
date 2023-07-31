@@ -20,10 +20,9 @@ export default function index() {
     setTabId(key)
   };
   const UserCard = ()=>{
-    const {fullName} = useSelector(state=>state.users)
     return(
       <div>
-            <h2>Request a ride now {fullName}</h2>
+            <h2>Request a ride now </h2>
               <form>
                     <input type='text' placeholder='Pick up address'/>
                     <input type='text' placeholder='Drop off address'/>

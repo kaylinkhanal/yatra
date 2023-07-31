@@ -1,6 +1,7 @@
 import React from 'react'
 import Home from './home'
 import Login  from './login'
+
 const UnAuthenticatedPages = ()=> {
   return <Login/>
 }
@@ -14,6 +15,7 @@ const AuthenticatedPages = ()=> {
 const index =()=> {
   return (
     <div>
+  
       <AuthenticatedPages/>
     </div>
   )
