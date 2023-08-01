@@ -15,7 +15,6 @@ const AuthenticatedPages = ()=> {
 const index =()=> {
   return (
     <div>
-  
       <AuthenticatedPages/>
     </div>
   )
