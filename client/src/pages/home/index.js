@@ -3,8 +3,19 @@ import { useSelector } from 'react-redux'
 import Header from '@/components/Header'
 import Heroimg from '../../../public/assets/fewa-banner.jpeg'
 import Footer from '@/components/Footer'
+import { GoogleMap, LoadScript } from '@react-google-maps/api';
 import { Tabs } from 'antd';
 export default function index() {
+
+const containerStyle = {
+  width: '400px',
+  height: '400px'
+};
+
+const center = {
+  lat: -3.745,
+  lng: -38.523
+};
   const [tabId, setTabId] = useState(1)
   const items = [
     {
@@ -20,10 +31,10 @@ export default function index() {
     setTabId(key)
   };
   const UserCard = ()=>{
-    const {fullName} = useSelector(state=>state.users)
     return(
-      <div>
-            <h2>Request a ride now {fullName}</h2>
+      <div style={{ display:"flex", gap:'2rem'}}>
+        <div>
+           <h2>Request a ride now </h2>
               <form>
                     <input type='text' placeholder='Pick up address'/>
                     <input type='text' placeholder='Drop off address'/>
@@ -31,6 +42,23 @@ export default function index() {
                 <div className='btn'>
                   <a href='/passenger' >Request now</a>
                 </div>
+        </div>
+           
+                <div>
+                <LoadScript
+        googleMapsApiKey="AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0"
+      >
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={10}
+        >
+          { /* Child components, such as markers, info windows, etc. */ }
+          <></>
+        </GoogleMap>
+      </LoadScript>
+                </div>
+              
       </div>
     )
   }

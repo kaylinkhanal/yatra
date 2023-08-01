@@ -38,7 +38,7 @@ const Register = () => {
       const res = await fetch('http://localhost:4000/register',requestOptions)
       const data = await res.json()
       if(data && res.status==200) { 
-        
+        debugger;
         dispatch(setUserDetails(data))
         router.push('/')
         setTimeout(() => {
