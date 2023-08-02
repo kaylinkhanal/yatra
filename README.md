@@ -3,6 +3,7 @@
 - [ ] map integration 
 - [ ] multi user login-> admin, user and rider
 - [ ] pagination, sort,search -> ride history
+- [ ] active ride: sort by distance/time
 - [ ] bookmark -> location
 - [ ] price bargaining
 - [ ] multiple vehicle option
