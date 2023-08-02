@@ -130,3 +130,14 @@ button[type="submit"]:hover{
 .app--login input + div{
   color:red;
 }
+
+/* PROFILE PAGE */
+.user--profile{
+  padding:40px 0;
+}
+.user--profile .account--details p span{
+  font-weight: bold;
+}
+.user--profile .account--details{
+  margin-bottom: 20px;
+}
