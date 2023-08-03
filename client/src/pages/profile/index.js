@@ -65,6 +65,7 @@ export default function Profile() {
       {value: 'fullName', type: 'text'},
       {value: 'email', type: 'text'},
       {value: 'phoneNumber', type: 'text'},
+      {value: '_id', type: 'hidden'},
      ]
       let tempObj={}
       AccountUserFields.forEach((item)=> {
@@ -77,6 +78,7 @@ export default function Profile() {
     const handleSubmit= ()=> {
         alert("submit to backend")
     }
+    
   return (
     <>
         <Header/>
@@ -148,7 +150,6 @@ export default function Profile() {
                                      onCancel={()=>setIsAccountModalOpen(false)} >
                                          <CustomForm title="Edit Account Details"
                                           submitEndpoint="/users"
-                                          
                                           method="PUT"
                                           initialValues={tempObj} AccountUserFields={AccountUserFields}/>
                                 </Modal>

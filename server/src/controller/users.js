@@ -72,5 +72,24 @@ const saltRounds = 10
         }
       
     }
+    const updateUser = async(req,res) => {
+        // console.log(req.body)
+        if(req.params.uid){
+            const data= await Users.findByIdAndUpdate(req.params.uid, { $set: req.body })
+            // console.log(data)
+            if(data) {
+                res.json({
+                msg: "User updated successfully",
+                success:true,
+                userDetails: data
+                })
+            }else{
+                res.json({
+                msg: "User not found",
+                })
+            }
+        }
+    }
+    
 
-    module.exports = {registerUser,loginUser,changePassword}
+    module.exports = {registerUser,loginUser,changePassword,updateUser}
