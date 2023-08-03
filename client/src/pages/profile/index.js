@@ -1,24 +1,26 @@
-import React, {useState} from 'react'
+import React,{useState} from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useSelector } from 'react-redux'
 import { Col, Row, Avatar, Card, Image,  Button, Space, Modal} from 'antd'
+
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import CustomForm from '@/components/CustomForm'
 const SignupSchema = Yup.object().shape({
+
     currentPassword: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
-      .required('Required'),
-    newPassword: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
+    .min(8, 'Password must be at least 8 characters long!')
+    .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
+    .required('Required'),
+      newPassword: Yup.string()
+      .min(8, 'Password must be at least 8 characters long!')
+      .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
       .required('Required'),
       confirmNewPassword: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
+      .min(8, 'Password must be at least 8 characters long!')
       .required('Required')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match'),
   });
   
   const ChangePassForm = () => {
@@ -38,21 +40,28 @@ const SignupSchema = Yup.object().shape({
         >
           {({ errors, touched }) => (
             <Form>
-              <Field name="currentPassword" type="password" placeholder="Current password"/>
+              <Field name="currentPassword" type="password" placeholder="cCurrent-Password"/>
               {errors.currentPassword && touched.currentPassword ? (
                 <div>{errors.currentPassword}</div>
               ) : null}
-              <Field name="newPassword" type="password" placeholder="New password"/>
+
+
+              <Field name="newPassword" type="password" placeholder="New-Password"/>
               {errors.newPassword && touched.newPassword ? (
                 <div>{errors.newPassword}</div>
               ) : null}
-              <Field name="confirmNewPassword" type="password" placeholder="New password" />
+
+
+              <Field name="confirmNewPassword" type="password" placeholder="Confirm-New-Password" />
               {errors.confirmNewPassword && touched.confirmNewPassword ? <div>{errors.confirmNewPassword}</div> : null}
               <button type="submit">Change password</button>
             </Form>
           )}
         </Formik>
       </div>
+
+
+
     )
    }
 
