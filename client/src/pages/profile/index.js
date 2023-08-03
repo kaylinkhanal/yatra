@@ -2,26 +2,28 @@ import React, {useState} from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { useSelector } from 'react-redux'
-import { Col, Row, Avatar, Card, Image,  Button, Space, Modal} from 'antd'
+import { Col, Row, Avatar, Card, Image,  Button, Space, Modal,message} from 'antd'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+
 const SignupSchema = Yup.object().shape({
     currentPassword: Yup.string()
       .min(2, 'Too Short!')
       .max(50, 'Too Long!')
       .required('Required'),
     newPassword: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
+    .min(5, 'Password Too Short!')
       .required('Required'),
       confirmNewPassword: Yup.string()
-      .min(2, 'Too Short!')
-      .max(50, 'Too Long!')
+      .min(5, 'Password Too Short!')
       .required('Required')
+      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
   });
   
-  const ChangePassForm = () => {
+  const ChangePassForm = ({handleChangePassword}) => {
     return (
+      <>
+     
       <div>
         <Formik
           initialValues={{
@@ -31,8 +33,7 @@ const SignupSchema = Yup.object().shape({
           }}
           validationSchema={SignupSchema}
           onSubmit={values => {
-            // same shape as initial values
-            console.log(values);
+            handleChangePassword (values);
           }}
         >
           {({ errors, touched }) => (
@@ -52,16 +53,42 @@ const SignupSchema = Yup.object().shape({
           )}
         </Formik>
       </div>
+      </>
     )
    }
+
 export default function Profile() {
     const {userDetails} = useSelector(state=>state.users)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSubmit= ()=> {
         alert("submit to backend")
     }
+    const [msg, contextHolder] = message.useMessage();   
+
+
+    const handleChangePassword = async(values) =>{
+      const userId = userDetails._id;
+    
+      const{confirmNewPassword,...formFields} = values
+      const requestOptions ={
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formFields)
+      };
+      const res = await fetch(`http://localhost:4000/change-password/${userId}`,requestOptions)
+      const data = await res.json();
+    if(data && res.status==200){
+      setIsModalOpen(false)
+      msg.info(data.msg)
+    }else if(data && res.status==401){
+      msg.info(data.msg)
+    }
+    }
+
+
   return (
     <>
+    {contextHolder}
         <Header/>
             <section className='user--profile'>
                 <div className='container'>
@@ -124,7 +151,7 @@ export default function Profile() {
                                 <Modal
                                     footer={null}
                                     title="Change Password" open={isModalOpen} onOk={handleSubmit} onCancel={()=>setIsModalOpen(false)} >
-                                    <ChangePassForm/>
+                                    <ChangePassForm handleChangePassword={handleChangePassword}/>
                                 </Modal>
                             </Space>
                         </Card>

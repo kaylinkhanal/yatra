@@ -67,4 +67,30 @@ const saltRounds = 10
       
     }
 
-    module.exports = {registerUser,loginUser}
+    const changePassword = async(req ,res) =>{
+        try{
+            const userId =req.params.id;
+            const data = await Users.findById(userId)      
+            if(data){   
+                const isMatched = await bcrypt.compare(req.body.currentPassword,data.password)
+                if(!isMatched){
+                    res.status(401).json({
+                        msg: "Incorrect password",
+                        passChange: false,
+                    })
+                }
+                else{
+                    req.body.newPassword = await bcrypt.hash(req.body.newPassword, saltRounds)
+                    await Users.findByIdAndUpdate(userId,{password: req.body.newPassword})
+                    res.status(200).json({
+                        msg: "Password Changed Success",
+                        passChange: true,
+                    })
+                }
+            }
+        }catch(err){
+            console.log(err);
+        }
+     }
+
+    module.exports = {registerUser,loginUser,changePassword}
