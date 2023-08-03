@@ -1,11 +1,11 @@
-const express=require('express')
-const router=express.Router()
+const express = require('express')
+const router = express.Router()
 const UsersController = require('../controller/users')
 // router.get('/phone-available/:phoneNumber',UsersController.checkIfUserExists )
-router.post('/register', UsersController.registerUser )
-router.post('/change-password/:id', UsersController.changePassword )
+router.post('/register', UsersController.registerUser)
+router.post('/change-password/:id', UsersController.changePassword)
+router.post('/change-password/', UsersController.changePassword)
+router.put('/users/:id', UsersController.changeUserDetails)
 
-router.post('/login', UsersController.loginUser )
 
-
-module.exports=router;
+module.exports = router;
