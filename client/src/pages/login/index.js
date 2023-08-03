@@ -14,6 +14,7 @@ const Login = () => {
   const [msg, contextHolder] = message.useMessage();   
   const dispatch = useDispatch()
   const handleLogin=async(values)=>{
+  try{
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -22,13 +23,19 @@ const Login = () => {
   const res = await fetch('http://localhost:4000/login',requestOptions)
   const data = await res.json()
   if(data && data.success && res.status==200) { 
-    debugger
     dispatch(setUserDetails(data))
     router.push('/')
     msg.info(data.msg);
   }else{
     msg.info(data.msg);
   }
+  }catch(err){
+    msg.info('Something went wrong!!');
+  }
+
+
+
+
 }
     const LoginSchema = Yup.object().shape({
       phoneNumber: Yup.string().required('Required'),

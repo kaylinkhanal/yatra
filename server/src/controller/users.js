@@ -36,7 +36,13 @@ const saltRounds = 10
       
     }
 
-
+    const changePassword =  async(req, res) => {
+        // dbData= Users.findById(req.params.id)
+          //1. req.body.currentPassword and dbData.password
+          //bcrypt.compare(req.body.password, data.password)
+          //if true, update database=> 
+          //findByIdandUpdate(req.params.id, {password: req.body.newPassword})
+    }   
     const loginUser=  async(req, res) => {
         try{
           const data = await Users.findOne({phoneNumber: req.body.phoneNumber}) 
@@ -67,4 +73,4 @@ const saltRounds = 10
       
     }
 
-    module.exports = {registerUser,loginUser}
+    module.exports = {registerUser,loginUser,changePassword}

@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { Col, Row, Avatar, Card, Image,  Button, Space, Modal} from 'antd'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import CustomForm from '@/components/CustomForm'
 const SignupSchema = Yup.object().shape({
     currentPassword: Yup.string()
       .min(2, 'Too Short!')
@@ -54,8 +55,24 @@ const SignupSchema = Yup.object().shape({
       </div>
     )
    }
+
+
+
+
 export default function Profile() {
     const {userDetails} = useSelector(state=>state.users)
+    const AccountUserFields= [
+      {value: 'fullName', type: 'text'},
+      {value: 'email', type: 'text'},
+      {value: 'phoneNumber', type: 'text'},
+     ]
+      let tempObj={}
+      AccountUserFields.forEach((item)=> {
+        tempObj[item.value] = 
+        userDetails[item.value]
+      })
+      
+    const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const handleSubmit= ()=> {
         alert("submit to backend")
@@ -95,6 +112,7 @@ export default function Profile() {
                         <Col span={12}>
                         <Card className="account--details"
                             title="Account Details"
+                            extra={<span onClick={()=>setIsAccountModalOpen(true)}>Edit Details</span>}
                             bordered={true}
                             style={{
                             width: '100%',
@@ -121,9 +139,25 @@ export default function Profile() {
                                 <Button type="primary" onClick={()=>setIsModalOpen(true)}>
                                 Change Password
                                 </Button>
+                                
                                 <Modal
                                     footer={null}
-                                    title="Change Password" open={isModalOpen} onOk={handleSubmit} onCancel={()=>setIsModalOpen(false)} >
+                                    title="Edit Account Details" 
+                                    open={isAccountModalOpen} 
+                              
+                                     onCancel={()=>setIsAccountModalOpen(false)} >
+                                         <CustomForm title="Edit Account Details"
+                                          submitEndpoint="/users"
+                                          
+                                          method="PUT"
+                                          initialValues={tempObj} AccountUserFields={AccountUserFields}/>
+                                </Modal>
+                                <Modal
+                                    footer={null}
+                                    title="Change Password" 
+                                    open={isModalOpen} 
+                                    onOk={handleSubmit}
+                                     onCancel={()=>setIsModalOpen(false)} >
                                     <ChangePassForm/>
                                 </Modal>
                             </Space>

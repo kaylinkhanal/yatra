@@ -1,22 +1,24 @@
 import Image from 'next/image'
 import { Avatar, Space, Popover  } from 'antd';
 import {CustomLogo} from './Logo';
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router';
+import {handleLogout} from '../redux/reducerSlice/users'
 import Link from 'next/link';
 
 
 export default function Header() {
   const router =useRouter()
-  const handleLogout =()=>{
-    router.push('/profile')
+  const dispatch = useDispatch()
+  const userLogout =()=>{
+    dispatch(handleLogout())
   }
   const {isLoggedIn, userDetails} = useSelector(state=>state.users)
   const content = (
     <div>
   
       <Link href="/profile">Profile</Link>
-      <p onClick={handleLogout}>Logout</p>
+      <p onClick={userLogout}>Logout</p>
     </div>
   );
 
