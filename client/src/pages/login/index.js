@@ -1,8 +1,9 @@
-import React from 'react'
-import { Formik, Form, Field } from 'formik';
+import React, {useState} from 'react'
+import { Formik, Form, Field,ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Link from 'next/link'
 import { Button, message, Space } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; 
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { useRouter } from 'next/navigation'
@@ -11,7 +12,11 @@ import { useDispatch } from 'react-redux';
 
 const Login = () => {
   const router = useRouter()
+  
   const [msg, contextHolder] = message.useMessage();   
+  const [showPassword, setShowPassword] = useState(false);
+  
+
   const dispatch = useDispatch()
   const handleLogin=async(values)=>{
   try{
@@ -39,7 +44,10 @@ const Login = () => {
 }
     const LoginSchema = Yup.object().shape({
       phoneNumber: Yup.string().required('Required'),
-      password: Yup.string().required('Required')
+      password: Yup.string()
+      .min(8, 'Password must be at least 8 characters long!')
+      .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
+      .required('Required')
     });
     return(
         <>
@@ -63,8 +71,23 @@ const Login = () => {
            <Form>
             <Field name="phoneNumber"  placeholder="Phone Number"/>
              {errors.phoneNumber && touched.phoneNumber ? <div>{errors.phoneNumber}</div> : null}
-             <Field name="password" type="password" placeholder="Password"/>
-             {errors.password && touched.password ? <div>{errors.password}</div> : null}
+             <div style={{ position: 'relative' }}>
+                  <Field name="password" type={showPassword ? 'text' : 'password'} placeholder="Password" />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeInvisibleOutlined /> : <EyeTwoTone />}
+                  </span>
+                </div>
+                <ErrorMessage name="password" component="div" />
+
              <button type="submit">Login</button>
            </Form>
          )}

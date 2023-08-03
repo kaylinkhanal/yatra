@@ -1,8 +1,9 @@
-import React from 'react'
-import { Formik, Form, Field } from 'formik';
+import React, {useState} from 'react'
+import { Formik, Form, Field,ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/navigation'
 import { Button, message } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; 
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { setUserDetails } from '@/redux/reducerSlice/users';
@@ -12,16 +13,18 @@ const Register = () => {
       const router = useRouter()
       const dispatch = useDispatch()
       const [msg, contextHolder] = message.useMessage();   
+      const [showPassword, setShowPassword] = useState(false);
        const SignupSchema = Yup.object().shape({
       fullName: Yup.string()
           .min(2, 'Too Short!')
           .max(50, 'Too Long!')
           .required('Required'),
         password: Yup.string()
-        .min(5, 'Password Too Short!')
+        .min(8, 'Password must be at least 8 characters long!')
+        .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
         .required('Required'),
         confirmPassword: Yup.string()
-        .min(5, 'Password Too Short!')
+        .min(8, 'Password must be at least 8 characters long!')
         .required('Required')
         .oneOf([Yup.ref('password'), null], 'Passwords must match'),
         email: Yup.string().email('Invalid email').required('Required'),
@@ -76,9 +79,45 @@ const Register = () => {
              ) : null}
              <Field name="email" type="email" placeholder="Email"/>
              {errors.email && touched.email ? <div>{errors.email}</div> : null}
-             <Field name="password" type="password" placeholder="Password"/>
-             {errors.password && touched.password ? <div>{errors.password}</div> : null}
-             <Field name="confirmPassword" type="password" placeholder="Confirm Password"/>
+             
+           
+                <div style={{ position: 'relative' }}>
+                  <Field name="password" type={showPassword ? 'text' : 'password'} placeholder="Password" />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeInvisibleOutlined /> : <EyeTwoTone />}
+                  </span>
+                </div>
+                <ErrorMessage name="password" component="div" />
+
+                <div style={{ position: 'relative' }}>
+                  <Field
+                    name="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Confirm Password"
+                  />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeInvisibleOutlined /> : <EyeTwoTone />}
+                  </span>
+                </div>
+                <ErrorMessage name="confirmPassword" component="div" />
              {errors.confirmPassword && touched.confirmPassword ? <div>{errors.confirmPassword}</div> : null}
              <Field name="phoneNumber" type="text"  placeholder="Phone Number"/>
              {errors.phoneNumber && touched.phoneNumber ? <div>{errors.phoneNumber}</div> : null}

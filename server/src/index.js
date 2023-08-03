@@ -7,7 +7,7 @@ const userRoute=require('./routes/users')
 connection()
 const app = express()
 app.use(cors())
-const port = process.env.PORT || 4000
+const port = process.env.PORT 
 app.use(express.json())
 
 app.use("/",userRoute)
