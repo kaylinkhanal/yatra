@@ -141,3 +141,10 @@ button[type="submit"]:hover{
 .user--profile .account--details{
   margin-bottom: 20px;
 }
+
+.card{
+  background-color: aqua;
+  margin: 10px;
+  height: 200px;
+  width: 120px;
+}
