@@ -45,13 +45,10 @@ const changePassword = async (req, res) => {
 }
 const changeUserDetails = async (req, res) => {
     try {
-        let data = await Users.findById(req.params.id)
-        Object.keys(req.body).map((item) => {
-            return data[item] = req.body[item]
-        })
-        const newData = await Users.updateOne({ _id: req.params.id }, { $set: data });
-        console.log(newData)
-        if (newData.acknowledged) {
+        //to check the current details of user
+        await Users.findByIdAndUpdate(req.params.id,{ $set: req.body })
+        const data = await Users.findById(req.params.id)
+        if (data) {
             res.json({
                 msg: "Details changed successfully",
                 success: true,
@@ -66,7 +63,7 @@ const changeUserDetails = async (req, res) => {
 }
 const loginUser = async (req, res) => {
     try {
-        const data = await Users.find({ phoneNumber: req.body.phoneNumber })
+        const data = await Users.findOne({ phoneNumber: req.body.phoneNumber })
         if (data) {
             const isMatched = await bcrypt.compare(req.body.password, data.password)
             if (isMatched) {

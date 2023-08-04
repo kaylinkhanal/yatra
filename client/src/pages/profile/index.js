@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import { useSelector } from 'react-redux'
+import { setUserDetails } from '@/redux/reducerSlice/users';
+import { useDispatch, useSelector } from 'react-redux'
 import { Col, Row, Avatar, Card, Image, Button, Space, Modal } from 'antd'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
@@ -74,8 +75,30 @@ export default function Profile() {
 
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleSubmit = () => {
-    alert("submit to backend")
+
+
+  const dispatch = useDispatch()
+
+  const handleSubmit = async (values) => {
+    try {
+      const { confirmPassword, ...formFields } = values
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formFields)
+      };
+      const res = await fetch(`http://localhost:4000/users/${userDetails._id}`, requestOptions)
+      const data = await res.json()
+      if (data && res.status == 200) {
+        dispatch(setUserDetails(data))
+        setIsAccountModalOpen(false)
+      } else {
+        msg.info(res.statusText);
+      }
+    } catch (error) {
+      setIsAccountModalOpen(false)
+      console.log(error)
+    }
   }
   return (
     <>
@@ -149,6 +172,7 @@ export default function Profile() {
                     <CustomForm title="Edit Account Details"
                       submitEndpoint="/users"
                       method="PUT"
+                      handleSubmit={handleSubmit}
                       initialValues={tempObj} AccountUserFields={AccountUserFields} />
                   </Modal>
                   <Modal
