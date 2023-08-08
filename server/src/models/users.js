@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema({
     email: String,
     password: String,
     mode: {type: String, default: 'Passenger'},
-    vehicleDetails: Object
+    verified: {type: Boolean, default:false},
+    productName: {type: String},
+    licenseNumber: String,
+    licenseImage: String
   });
   
   const Users = mongoose.model('Users', userSchema);

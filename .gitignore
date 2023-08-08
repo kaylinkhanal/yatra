@@ -2,6 +2,10 @@
 logs
 *.log
 npm-debug.log*
+server/uploads/
+/src/uploads
+**/src/uploads/driverLicense
+**/src/uploads/userAvatar
 
 # Runtime data
 pids

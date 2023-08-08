@@ -63,7 +63,7 @@ const ChangePassForm = () => {
 export default function Profile() {
   const { userDetails } = useSelector(state => state.users)
   const AccountUserFields = [
-    { value: 'fullName', type: 'text' },
+    { value: 'fullName', type: 'text', },
     { value: 'email', type: 'text' },
     { value: 'phoneNumber', type: 'text' },
   ]
