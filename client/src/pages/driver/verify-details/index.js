@@ -1,12 +1,24 @@
 import React, {useState} from 'react'
 import { Formik, Form, Field } from 'formik';
-
+import { useSelector } from 'react-redux';
 const VerifyDetails = () => {
+const {userDetails} =useSelector(state=>state.users)
+
     const [file,setFile] = useState(null)
   const handleVerification=async(values)=>{
-    console.log(file)
+    debugger;
+    const data = new FormData()
+    data.append('licenseImage', file)
+    data.append('licenseNumber', values.licenseNumber)
 
-    }
+    const requestOptions = {
+      method: 'PUT',
+      body: data
+  };
+  const res = await fetch('http://localhost:4000/verify-details/'+userDetails._id,requestOptions)
+  }
+
+  
     return(
         <>
       <div className='container'> 
