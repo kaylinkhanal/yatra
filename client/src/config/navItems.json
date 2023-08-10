@@ -1,0 +1,5 @@
+{
+    "Admin": [
+        {"link": "/user", "label":"user"}
+    ]
+}

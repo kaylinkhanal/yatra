@@ -64,8 +64,9 @@ const Register = () => {
               confirmPassword: ''
             }}
             validationSchema={SignupSchema}
-            onSubmit={values => {
+            onSubmit={(values, { resetForm }) => {
               handleRegister(values)
+              resetForm()
             }}
           >
             {({ errors, touched }) => (

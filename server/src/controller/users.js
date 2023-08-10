@@ -38,6 +38,16 @@ const registerUser = async (req, res) => {
 
 }
 
+const getAllUsers = async (req, res) => {
+const data = await Users.find()
+if(data){
+    res.json({
+        userList: data
+    })
+}
+    
+}
+
 const verifyUserDetails = async (req, res) => {
     await Users.findByIdAndUpdate(req.params.id,{ $set: {licenseNumber:req.body.licenseNumber,licenseImage: req.file.filename }})
 }
@@ -111,4 +121,4 @@ const loginUser = async (req, res) => {
 
 }
 
-module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById }
+module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers}

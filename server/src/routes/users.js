@@ -23,7 +23,9 @@ router.get('/liscense-img/:id', UsersController.getLicenseImgById)
 router.post('/register', UsersController.registerUser)
 router.post('/change-password/:id', UsersController.changePassword)
 router.post('/login', UsersController.loginUser)
+router.get('/users', UsersController.getAllUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
+
 
 
 module.exports = router;
