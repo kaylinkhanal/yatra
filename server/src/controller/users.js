@@ -39,10 +39,13 @@ const registerUser = async (req, res) => {
 }
 
 const getAllUsers = async (req, res) => {
-const data = await Users.find()
+
+const data = await Users.find().limit(req.query.size).skip((req.query.page - 1)* req.query.size )
+const count = await Users.find().count()
 if(data){
     res.json({
-        userList: data
+        userList: data,
+        count:count
     })
 }
     
