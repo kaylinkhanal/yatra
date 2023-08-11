@@ -47,7 +47,7 @@ const Login = () => {
         <Header/>
       <div className='container'> 
       <div className="app--login">
-        <h2>Please Login</h2>
+        <h2 className='text-3xl font-semibold mt-12 text-center'>Login to Ride or Drive</h2>
         <Formik
          initialValues={{
             phoneNumber: '',
@@ -60,16 +60,18 @@ const Login = () => {
          }}
        >
          {({ errors, touched }) => (
-           <Form>
+           <Form className='py-5  h-[500px]'>
             <Field name="phoneNumber"  placeholder="Phone Number"/>
              {errors.phoneNumber && touched.phoneNumber ? <div>{errors.phoneNumber}</div> : null}
              <Field name="password" type="password" placeholder="Password"/>
              {errors.password && touched.password ? <div>{errors.password}</div> : null}
-             <button type="submit">Login</button>
+             <button id='loginBtn'  className='loginBTN px-[14px] py-[18px] w-full mt-4 rounded-[20px] text-white font-lg bg-black ' type="submit">Login</button>
+          
+            <p className='text-center text-gray-800 mt-8'>Don't have an account? <Link  href="/register"> <span className='text-black ml-1 font-semibold hover:underline'> Sign up </span> </Link></p>
+            
            </Form>
          )}
        </Formik>
-        <p>Don't have an account? <Link href="/register">Sign up</Link></p>
       </div>
       </div>
       <Footer/>

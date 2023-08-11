@@ -1,3 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 body{
   margin:0;
   font-family: 'Open Sans', sans-serif;
@@ -103,9 +108,9 @@ form input{
 	     -o-transition:0.2s ease all;
 	        transition:0.2s ease all;
 }
-.request--box a,
-button[type="submit"]{
-  background-color: #000;
+/* .requestBtn, a
+{ 
+   background-color: #000;
   padding: 14px 25px;
   color:#fff;
   border-radius: 8px;
@@ -113,12 +118,14 @@ button[type="submit"]{
   font-size: 1rem;
   text-decoration: none;
   margin-top: 20px;
-  cursor: pointer;
-}
-.request--box a:hover,
+  cursor: pointer; 
+ } 
+.requestBtn a:hover,
 button[type="submit"]:hover{
   opacity: 0.5;
-}
+} */
+
+
 /* BANNER CSS ENDS */
 /*  */
 
