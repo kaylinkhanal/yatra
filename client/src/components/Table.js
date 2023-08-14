@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { Divider, Radio, Table,Popconfirm } from 'antd';
-
 import { Skeleton,Switch, Button, Modal } from 'antd';
-
 import {
   DeleteOutlined,
   EditOutlined
 } from '@ant-design/icons';
 
-
-
-
+const deleteUser= async(id)=>{
+  try{
+    const res = await fetch(`http://localhost:4000/delete-user/${id}`,{
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+  catch (err) {
+    console.error(err);
+  }
+};
+ 
 const CustomTable = (props) => {
   const [isEditOpen, setIsEditOpen] =useState(false)
   const [currentUser , setCurrentUser] = useState({})
@@ -55,7 +62,7 @@ const CustomTable = (props) => {
           <Popconfirm
       title="Delete the task"
       description="Are you sure to delete this task?"
-      // onConfirm={confirm}
+      onConfirm={()=>deleteUser(value._id)}
       onCancel={()=> setIsEditOpen(false)}
       okText="Yes"
       cancelText="No"

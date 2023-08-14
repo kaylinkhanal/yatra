@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const saltRounds = 10
 const path= require('path')
 const fs =require('fs')
+require("dotenv").config();
+
 
 const registerUser = async (req, res) => {
     try {
@@ -18,7 +20,7 @@ const registerUser = async (req, res) => {
             //step 2: create a hash password of req.body.password
             req.body.password = await bcrypt.hash(req.body.password, saltRounds)
             //step 3: create a jwt token for the user
-            const token = jwt.sign({ phoneNumber: req.body.phoneNumber }, process.env.SECRET_KEY);
+            const token = jwt.sign({ phoneNumber: req.body.phoneNumber },`${ process.env.SECRET_KEY}`);
             const data = await Users.create(req.body)
             if (data) {
                 const { password, ...otherFields } = data._doc
@@ -124,4 +126,22 @@ const loginUser = async (req, res) => {
 
 }
 
-module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers}
+const deleteUser = async (req, res) => {
+    try {
+        const data = await Users.findByIdAndDelete(req.params.id)
+            if (data){
+                res.json({
+                    msg: "User successfully deleted",
+                    success: true
+                })
+            }
+
+        }
+
+    catch (err) {
+        console.log(err)
+    }
+}
+
+
+module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers,deleteUser}

@@ -17,14 +17,13 @@ const storage = multer.diskStorage({
 // router.get('/phone-available/:phoneNumber',UsersController.checkIfUserExists )
 router.post('/register', UsersController.registerUser)
 router.put('/verify-details/:id', upload.single('licenseImage'), UsersController.verifyUserDetails)
-
 router.get('/liscense-img/:id', UsersController.getLicenseImgById)
-
 router.post('/register', UsersController.registerUser)
 router.post('/change-password/:id', UsersController.changePassword)
 router.post('/login', UsersController.loginUser)
 router.get('/users', UsersController.getAllUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
+router.delete('/delete-user/:id', UsersController.deleteUser)
 
 
 
