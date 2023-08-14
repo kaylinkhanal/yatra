@@ -33,15 +33,15 @@ const center = {
   const UserCard = ()=>{
     return(
       <div style={{ display:"flex", gap:'2rem'}}>
-        <div>
+        <div className='content'>
            <h2>Request a ride now </h2>
               <form>
                     <input type='text' placeholder='Pick up address'/>
                     <input type='text' placeholder='Drop off address'/>
                   </form>
-                <div className='btn'>
-                  <a href='/passenger' >Request now</a>
-                </div>
+                  <div className='btn'>
+                      <a href='/passenger' >Request now</a>
+                    </div>
         </div>
            
                 <div>
