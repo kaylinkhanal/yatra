@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,  } from 'react';
 import { Divider, Radio, Table, Popconfirm } from 'antd';
 
 import { Skeleton, Switch, Button, Modal, Tooltip, message } from 'antd';
@@ -10,15 +10,9 @@ import {
 } from '@ant-design/icons';
 
 
-// Delete user code here ---->
+// <----- Delete user code here ---->
 const deleteText = <span>Delete User</span>;
 const editText = <span>Edit User</span>;
-// const confirm = () => {
-//   // alert('Delete User from database');
-//   message.success('Delete this user successfully.');
-
-// }
-
 
 
 const deleteUser = async (ID) => {
@@ -27,12 +21,15 @@ const deleteUser = async (ID) => {
       method: 'DELETE',
     });
     message.success(`Delete user successfully.`);
-    // fetchUsers();
+    // setUsers(users.filter(user => user._id !== userId));
+    fetchUserDetails()
     
   } catch (error) {
     console.error(error);
   }
 };
+
+
 
 
 const CustomTable = (props) => {
