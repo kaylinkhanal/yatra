@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     verified: {type: Boolean, default:false},
     productName: {type: String},
     licenseNumber: String,
+    userId: String,
     licenseImage: String
   });
   

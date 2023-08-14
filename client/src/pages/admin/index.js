@@ -5,6 +5,7 @@ import Table from '../../components/Table'
 import { Pagination } from 'antd';
 function index() {
     const [users, setUsers] = useState([])
+
     const [totalCount, setTotalCount] = useState(0)
 
     const fetchUserDetails = async(page=1, size=10) => {
@@ -35,7 +36,7 @@ function index() {
             showSizeChanger
             onChange={(page ,size)=>fetchUserDetails(page, size)} defaultCurrent={1} total={44} />
             </div>): <Skeleton />}
-
+        
 
         {users.length>0 ? <Table users={users}/> : <Skeleton/>}
     </div>
