@@ -129,7 +129,7 @@ const CustomTable = (props) => {
 
       <Modal title="Verify User Details" open={isEditOpen} onCancel={() => setIsEditOpen(false)} width={1000} footer={false}
       >
-        {JSON.stringify(currentUser)}
+
         <div style={{
           "display": "flex"
         }}>
