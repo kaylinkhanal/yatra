@@ -84,7 +84,6 @@ const rowSelection = {
    
 
       <Divider />
-
       <Table
         rowSelection={{
           type: selectionType,
@@ -92,6 +91,8 @@ const rowSelection = {
         }}
         columns={columns}
         dataSource={props.users}
+        pagination={false}
+        
       />
     <Modal title="Basic Modal" open={isEditOpen}  onCancel={()=>setIsEditOpen(false)}>
    {JSON.stringify(currentUser)}

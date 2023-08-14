@@ -34,7 +34,7 @@ function index() {
             }
             <Pagination 
             showSizeChanger
-            onChange={(page ,size)=>fetchUserDetails(page, size)} defaultCurrent={1} total={44} />
+            onChange={(page ,size)=>fetchUserDetails(page, size)} defaultCurrent={1} total={totalCount} />
             </div>): <Skeleton />}
         
 

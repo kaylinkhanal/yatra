@@ -24,6 +24,7 @@ router.post('/register', UsersController.registerUser)
 router.post('/change-password/:id', UsersController.changePassword)
 router.post('/login', UsersController.loginUser)
 router.get('/users', UsersController.getAllUsers)
+router.get('/users-loadmore', UsersController.getLoadUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
 
 
