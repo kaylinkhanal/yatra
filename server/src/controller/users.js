@@ -39,7 +39,6 @@ const registerUser = async (req, res) => {
 }
 
 const getAllUsers = async (req, res) => {
-
 const data = await Users.find().limit(req.query.size).skip((req.query.page - 1)* req.query.size )
 const count = await Users.find().count()
 if(data){
@@ -50,6 +49,18 @@ if(data){
 }
     
 }
+
+const getLoadUsers = async (req, res) => {
+    const data = await Users.find().limit(req.query.size).skip(req.query.page)
+    const count = await Users.find().count()
+    if(data){
+        res.json({
+            userList: data,
+            count:count
+        })
+    }
+        
+    }
 
 const verifyUserDetails = async (req, res) => {
     await Users.findByIdAndUpdate(req.params.id,{ $set: {licenseNumber:req.body.licenseNumber,licenseImage: req.file.filename }})
@@ -124,4 +135,4 @@ const loginUser = async (req, res) => {
 
 }
 
-module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers}
+module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers, getLoadUsers}
