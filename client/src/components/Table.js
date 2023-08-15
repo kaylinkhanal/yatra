@@ -34,6 +34,7 @@ const CustomTable = (props) => {
           onSubmit={values => {
             // same shape as initial values
             handleEditProfile(values);
+            props.fetchUserDetails()
             
             
           }}

@@ -38,7 +38,7 @@ function admin() {
             </div>): <Skeleton />}
         
 
-        {users.length>0 ? <Table users={users}/> : <Skeleton/>}
+        {users.length>0 ? <Table users={users} fetchUserDetails={fetchUserDetails}/> : <Skeleton/>}
     </div>
   )
 }
