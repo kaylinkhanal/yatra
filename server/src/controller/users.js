@@ -94,6 +94,24 @@ const changeUserDetails = async (req, res) => {
 
 
 }
+const editUserDetailsByAdmin = async (req, res) => {
+    try {
+        //to check the current details of user
+        await Users.findByIdAndUpdate(req.params.id,{ $set: req.body })
+        const data = await Users.findById(req.params.id)
+        if (data) {
+            res.json({
+                msg: "Details changed successfully",
+                success: true,
+                userDetails: data
+            })
+        }
+    } catch (error) {
+        console.log(error)
+    }
+
+
+}
 const loginUser = async (req, res) => {
     try {
         const data = await Users.findOne({ phoneNumber: req.body.phoneNumber })
@@ -124,4 +142,4 @@ const loginUser = async (req, res) => {
 
 }
 
-module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers}
+module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers,editUserDetailsByAdmin}
