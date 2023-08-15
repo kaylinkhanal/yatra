@@ -53,7 +53,7 @@ export default function Header() {
           </Popover>
           </div>
         ):  <ul className="nav-menus">
-        <li><a href="/login">Login</a></li>
+        <li> <a href="/login " className=''>Login</a></li>
         <li><a className="active" href="/register">Signup</a></li>
     </ul> }
       

@@ -8,7 +8,7 @@ function index() {
 
     const [totalCount, setTotalCount] = useState(0)
 
-    const fetchUserDetails = async(page=1, size=10) => {
+     const fetchUserDetails = async(page=1, size=10) => {
         const res = await fetch(`http://localhost:4000/users?page=${page}&size=${size}`)
         const data = await res.json()
         setUsers(data.userList)
