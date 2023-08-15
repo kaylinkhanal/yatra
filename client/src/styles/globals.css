@@ -58,8 +58,8 @@ ul.nav-menus li a{
   text-decoration: none;
   font-weight: 500;
   line-height: 16px;
-  border-radius: 30px;
-  padding: 10px 12px;
+  border-radius: 20px;
+  padding: 14px 18px;
   white-space: nowrap;
 }
 ul.nav-menus li a.active,
@@ -111,7 +111,8 @@ form input{
 	     -o-transition:0.2s ease all;
 	        transition:0.2s ease all;
 }
-.request--box .btn a,
+
+/* .request--box a,
 button[type="submit"]{
   background-color: #000;
   padding: 14px 25px;
@@ -126,7 +127,7 @@ button[type="submit"]{
 .request--box a:hover,
 button[type="submit"]:hover{
   opacity: 0.5;
-}
+} */
 /* BANNER CSS ENDS */
 /*  */
 
