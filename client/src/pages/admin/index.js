@@ -5,7 +5,7 @@ import Table from '../../components/Table'
 import { Pagination } from 'antd';
 function index() {
     const [users, setUsers] = useState([])
-
+    const [page, setPage] = useState(1)
     const [totalCount, setTotalCount] = useState(0)
 
     const fetchUserDetails = async(page=1, size=10) => {
@@ -19,7 +19,7 @@ function index() {
     },[])
   return (
     <div>
-        {users.length>0 ? (
+        {/* {users.length>0 ? (
             <div>
             <div><input/></div>
            {
@@ -32,13 +32,15 @@ function index() {
             )}
             )
             }
-            <Pagination 
-            showSizeChanger
-            onChange={(page ,size)=>fetchUserDetails(page, size)} defaultCurrent={1} total={44} />
-            </div>): <Skeleton />}
+         
+            </div>): <Skeleton />} */}
         
-
+            <button >Add User</button>
         {users.length>0 ? <Table users={users}/> : <Skeleton/>}
+            <button onClick={()=> fetchUserDetails(1,  )}>Load more</button>
+        {/* <Pagination 
+            showSizeChanger
+            onChange={(page ,size)=>fetchUserDetails(page, size)} defaultCurrent={1} total={44} /> */}
     </div>
   )
 }

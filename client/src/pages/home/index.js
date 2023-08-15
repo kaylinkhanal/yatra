@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux'
 import Header from '@/components/Header'
 import Heroimg from '../../../public/assets/fewa-banner.jpeg'
 import Footer from '@/components/Footer'
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { GoogleMap ,useJsApiLoader ,Autocomplete} from '@react-google-maps/api';
 import { Tabs } from 'antd';
 export default function index() {
-
+  const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
 const containerStyle = {
   width: '400px',
   height: '400px'
@@ -43,20 +43,26 @@ const center = {
                   <a href='/passenger' >Request now</a>
                 </div>
         </div>
-           
                 <div>
-                <LoadScript
-        googleMapsApiKey="AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0"
-      >
-        <GoogleMap
+      {isLoaded ? (
+        <>
+             <Autocomplete>
+            <input/>
+          </Autocomplete>
+          <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
           zoom={10}
         >
+     
           { /* Child components, such as markers, info windows, etc. */ }
           <></>
         </GoogleMap>
-      </LoadScript>
+        </>
+       
+      ): "loading"}
+        
+      
                 </div>
               
       </div>

@@ -56,7 +56,7 @@ const CustomTable = (props) => {
       title="Delete the task"
       description="Are you sure to delete this task?"
       // onConfirm={confirm}
-      onCancel={()=> setIsEditOpen(false)}
+      // onCancel={()=> }
       okText="Yes"
       cancelText="No"
     >
@@ -86,6 +86,7 @@ const rowSelection = {
       <Divider />
 
       <Table
+      pagination={false}
         rowSelection={{
           type: selectionType,
           ...rowSelection,
