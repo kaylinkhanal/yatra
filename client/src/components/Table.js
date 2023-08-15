@@ -50,7 +50,7 @@ const CustomTable = (props) => {
       title: 'Verified',
       dataIndex: 'verified',
       render: (value, currentUser) => {
-        return <Switch defaultChecked={currentUser.verified} onChange={null} />
+        return <Switch key={value} checked={currentUser.verified} defaultChecked={currentUser.verified} onChange={null} />
       }
     },
     {
