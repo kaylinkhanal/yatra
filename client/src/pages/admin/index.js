@@ -38,7 +38,7 @@ function index() {
             </div>): <Skeleton />}
         
 
-        {users.length>0 ? <Table users={users}/> : <Skeleton/>}
+        {users.length>0 ? <Table fetchUserDetails={fetchUserDetails} users={users}/> : <Skeleton/>}
     </div>
   )
 }

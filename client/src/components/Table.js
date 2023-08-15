@@ -15,24 +15,25 @@ const deleteText = <span>Delete User</span>;
 const editText = <span>Edit User</span>;
 
 
-const deleteUser = async (ID) => {
-  try {
-    await fetch(`http://localhost:4000/delete-user/${ID}`, { 
-      method: 'DELETE',
-    });
-    message.success(`Delete user successfully.`);
-    // setUsers(users.filter(user => user._id !== userId));
-    fetchUserDetails()
-    
-  } catch (error) {
-    console.error(error);
-  }
-};
+
 
 
 
 
 const CustomTable = (props) => {
+  const deleteUser = async (ID) => {
+    try {
+      await fetch(`http://localhost:4000/delete-user/${ID}`, { 
+        method: 'DELETE',
+      });
+      message.success(`Delete user successfully.`);
+      // setUsers(users.filter(user => user._id !== userId));
+      props.fetchUserDetails()
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const [isEditOpen, setIsEditOpen] = useState(false)
   const [currentUser, setCurrentUser] = useState({})
   const [selectionType, setSelectionType] = useState('checkbox');
