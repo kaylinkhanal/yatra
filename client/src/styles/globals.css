@@ -103,7 +103,7 @@ form input{
 	     -o-transition:0.2s ease all;
 	        transition:0.2s ease all;
 }
-.request--box a,
+.request--box .btn a,
 button[type="submit"]{
   background-color: #000;
   padding: 14px 25px;
