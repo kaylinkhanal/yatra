@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { Skeleton } from 'antd';
 import Table from '../../components/Table'
 import { Pagination } from 'antd';
-function index() {
+function admin() {
     const [users, setUsers] = useState([])
 
     const [totalCount, setTotalCount] = useState(0)
@@ -43,4 +43,4 @@ function index() {
   )
 }
 
-export default index
+export default admin

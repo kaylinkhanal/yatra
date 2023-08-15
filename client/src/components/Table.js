@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Divider, Radio, Table,Popconfirm } from 'antd';
-
+import { Formik, Form, Field } from 'formik';
 import { Skeleton,Switch, Button, Modal } from 'antd';
+
+
 
 import {
   DeleteOutlined,
   EditOutlined
 } from '@ant-design/icons';
-
+import { data } from 'autoprefixer';
 
 
 
@@ -15,6 +17,69 @@ const CustomTable = (props) => {
   const [isEditOpen, setIsEditOpen] =useState(false)
   const [currentUser , setCurrentUser] = useState({})
   const [selectionType, setSelectionType] = useState('checkbox');
+
+  const EditProfileForm = ({ handleEditProfile }) => {
+
+    return (
+  
+      <div>
+        <Formik
+         initialValues={{
+         fullName:currentUser.fullName,
+         email:currentUser?.email,
+         phoneNumber:currentUser?.phoneNumber
+  
+        }}
+  
+          onSubmit={values => {
+            // same shape as initial values
+            handleEditProfile(values);
+            
+            
+          }}
+        >
+          {({ errors, touched }) => (
+            <Form>
+              <Field name="fullName"  />
+              {errors.fullname && touched.fullname ? (
+                <div className="text-sm inline text-red-500">{errors.fullname}</div>
+              ) : null}
+              <Field name="email" type="email"  />
+              {errors.email && touched.email ? <div>{errors.email}</div> : null}
+              <Field name="phoneNumber" type="text" />
+              {errors.phoneNumber && touched.phoneNumber ? <div>{errors.phoneNumber}</div> : null}
+              <button type="submit">Submit</button>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    )
+  }
+  
+  
+
+  const handleEditProfile=async(values)=>{
+    try {
+      const { confirmPassword, ...formFields } = values
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formFields)
+      };
+      const res = await fetch(`http://localhost:4000/users/${currentUser._id}`, requestOptions)
+      const data = await res.json();
+      if (data && res.status == 200) {
+        (setCurrentUser(data))
+        
+        setIsEditOpen(false)
+      } else {
+        msg.info(res.statusText);
+      }
+    } catch (error) {
+      setIsEditOpen(false)
+      console.log(error)
+    }
+  }
   const columns = [
     {
       title: 'Full Name',
@@ -52,6 +117,10 @@ const CustomTable = (props) => {
           <EditOutlined onClick={()=>{
             setCurrentUser(value)
             setIsEditOpen(true)}}/>
+            
+            
+
+            
           <Popconfirm
       title="Delete the task"
       description="Are you sure to delete this task?"
@@ -93,8 +162,13 @@ const rowSelection = {
         columns={columns}
         dataSource={props.users}
       />
-    <Modal title="Basic Modal" open={isEditOpen}  onCancel={()=>setIsEditOpen(false)}>
-   {JSON.stringify(currentUser)}
+    <Modal 
+    footer={null}
+    title="Basic Modal"
+     open={isEditOpen} 
+      onCancel={()=>setIsEditOpen(false)}>
+   {/* {JSON.stringify(currentUser)} */}
+   <EditProfileForm handleEditProfile={handleEditProfile}/>
   </Modal>
     </div>
   );

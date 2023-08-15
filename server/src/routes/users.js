@@ -25,6 +25,7 @@ router.post('/change-password/:id', UsersController.changePassword)
 router.post('/login', UsersController.loginUser)
 router.get('/users', UsersController.getAllUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
+router.put('/users/:id', UsersController.editUserDetailsByAdmin)
 
 
 
