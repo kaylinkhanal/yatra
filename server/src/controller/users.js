@@ -58,7 +58,7 @@ const verifyUserDetails = async (req, res) => {
 const getLicenseImgById = async (req, res) => {
     const data = await Users.findById(req.params.id)
     const imageDir = path.join(__dirname, '../../', 'uploads/licenseImage/' + data.licenseImage)
-    const defaultDir = path.join(__dirname, '../../', 'uploads/userAvatar/nobike.jpeg')
+    const defaultDir = path.join(__dirname, '../../', 'uploads/licenseImage/nobike.jpeg')
 
     if (fs.existsSync(imageDir)) {
         res.sendFile(imageDir)
