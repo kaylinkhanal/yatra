@@ -69,14 +69,13 @@ const center = {"lat":27.6854872,"lng":85.3447924}
                 {isLoaded && formStep ==1 && (
                   <>
            
-                  <Autocomplete 
+                  <Autocomplete
                     onPlaceChanged={handlePickUpChange}
-                  key={1}>
-                
-                  <input type='text' 
+                    key={1}>
+                <input type='text' 
                     ref={pickUpRef}
-                   value={pickUpAddr}
-                  onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'pickUpAddr'}))} 
+                    defaultValue={pickUpAddr}
+                  // onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'pickUpAddr'}))} 
                   placeholder='Pick up address'/>
                   </Autocomplete>
                   <button onClick={()=> setFormStep(2)}>Next</button>
