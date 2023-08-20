@@ -1,26 +1,18 @@
-import React, { useState,  } from 'react';
-import { Divider, Radio, Table, Popconfirm } from 'antd';
+import React, { useState } from 'react';
+import { Divider, Radio, Table, Popconfirm, Card } from 'antd';
 
-import { Skeleton, Switch, Button, Modal, Tooltip, message } from 'antd';
-
+import { Switch, Modal, Image, message } from 'antd';
 
 import {
   DeleteOutlined,
-  EditOutlined
+  EditOutlined,
 } from '@ant-design/icons';
-
-
-// <----- Delete user code here ---->
-const deleteText = <span>Delete User</span>;
-const editText = <span>Edit User</span>;
-
-
-
-
-
-
-
+import CustomForm from './CustomForm';
 const CustomTable = (props) => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [isEditOpen, setIsEditOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState({})
+  const [selectionType, setSelectionType] = useState('checkbox');
   const deleteUser = async (ID) => {
     try {
       await fetch(`http://localhost:4000/delete-user/${ID}`, { 
@@ -34,11 +26,17 @@ const CustomTable = (props) => {
       console.error(error);
     }
   };
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [currentUser, setCurrentUser] = useState({})
-  const [selectionType, setSelectionType] = useState('checkbox');
-
-
+  const AccountUserFields = [
+    { value: 'fullName', type: 'text', },
+    { value: 'email', type: 'text' },
+    { value: 'phoneNumber', type: 'text' },
+    { value: 'licenseNumber', type: 'text' },
+  ]
+  let editProfileInitials = {}
+  AccountUserFields.forEach((item) => {
+    editProfileInitials[item.value] =
+      currentUser[item.value]
+  })
   const columns = [
     {
       title: 'Full Name',
@@ -64,8 +62,8 @@ const CustomTable = (props) => {
     {
       title: 'Verified',
       dataIndex: 'verified',
-      render: (value) => {
-        return <Switch defaultChecked={value} onChange={null} />
+      render: (value, currentUser) => {
+        return <Switch disabled defaultChecked={currentUser.verified} checked={currentUser.verified} onChange={null} />
       }
     },
     {
@@ -74,12 +72,10 @@ const CustomTable = (props) => {
       render: (value) => {
         return (
           <div>
-              <Tooltip className='' placement="top" title={editText}> 
             <EditOutlined className='text-blue-500' onClick={() => {
               setCurrentUser(value)
               setIsEditOpen(true)
             }} />
-            </Tooltip>
          
             <Popconfirm
               title="Delete the User"
@@ -92,15 +88,35 @@ const CustomTable = (props) => {
               cancelText="No"
 
             >
-              <Tooltip className='' placement="top" title={deleteText}>
                 <DeleteOutlined className=" cursor-pointer text-red-500 font-bold text-md pl-4" />
-              </Tooltip>
             </Popconfirm>
           </div>
         )
       }
     },
   ];
+
+  const handleSubmit = async (values) => {
+    try {
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      };
+      const res = await fetch(`http://localhost:4000/users/${currentUser._id}`, requestOptions)
+      const data = await res.json()
+      if (data) {
+        messageApi.info(data.msg);
+        props.fetchUserDetails();
+        setIsEditOpen(false)
+      } else {
+        messageApi.info(res.statusText);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // rowSelection object indicates the need for row selection
   const rowSelection = {
@@ -115,11 +131,12 @@ const CustomTable = (props) => {
   };
   return (
     <div>
-
+      {contextHolder}
 
       <Divider />
 
       <Table
+        pagination={false}
         rowSelection={{
           type: selectionType,
           ...rowSelection,
@@ -128,8 +145,48 @@ const CustomTable = (props) => {
         dataSource={props.users}
       
       />
-      <Modal title="Basic Modal" open={isEditOpen} onCancel={() => setIsEditOpen(false)}>
-        {JSON.stringify(currentUser)}
+
+      <Modal title="Verify User Details" open={isEditOpen} onCancel={() => setIsEditOpen(false)} width={1000} footer={false}
+      >
+        <div style={{
+          "display": "flex"
+        }}>
+          <Image
+            width={300}
+            src={`http://localhost:4000/liscense-img/${currentUser._id}`}
+          />
+          <Card
+            title="User Details"
+            bordered={false}
+            style={{
+              width: 500,
+            }}
+          >
+            <CustomForm
+              title={"Update"}
+              submitEndpoint="/users"
+              method="PUT"
+              dropDownItems={[
+                {
+                  key: 'Passenger',
+                  label: 'Passenger',
+                },
+                {
+                  key: 'Driver',
+                  label: 'Driver',
+                },
+                {
+                  key: 'Blocked',
+                  label: 'Blocked',
+                },
+              ]}
+              handleSubmit={handleSubmit}
+              initialValues={editProfileInitials} AccountUserFields={AccountUserFields} currentUser={currentUser}
+              Switch={true}></CustomForm>
+
+          </Card>
+
+        </div>
       </Modal>
     </div>
   );

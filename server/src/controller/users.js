@@ -2,8 +2,8 @@ const Users = require('../models/users')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const saltRounds = 10
-const path= require('path')
-const fs =require('fs')
+const path = require('path')
+const fs = require('fs')
 
 const registerUser = async (req, res) => {
     try {
@@ -40,32 +40,32 @@ const registerUser = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
 
-const data = await Users.find().limit(req.query.size).skip((req.query.page - 1)* req.query.size )
-const count = await Users.find().count()
-if(data){
-    res.json({
-        userList: data,
-        count:count
-    })
-}
-    
+    const data = await Users.find().limit(req.query.size).skip((req.query.page - 1) * req.query.size)
+    const count = await Users.find().count()
+    if (data) {
+        res.json({
+            userList: data,
+            count: count
+        })
+    }
+
 }
 
 const verifyUserDetails = async (req, res) => {
-    await Users.findByIdAndUpdate(req.params.id,{ $set: {licenseNumber:req.body.licenseNumber,licenseImage: req.file.filename }})
+    await Users.findByIdAndUpdate(req.params.id, { $set: { licenseNumber: req.body.licenseNumber, licenseImage: req.file.filename } })
 }
 
-const getLicenseImgById =  async (req, res) => {
-  const data =  await Users.findById(req.params.id)
-    const imageDir = path.join(__dirname,'../../','uploads/userAvatar/'+data.licenseImage) 
-    const defaultDir = path.join(__dirname,'../../','uploads/userAvatar/nobike.jpeg') 
+const getLicenseImgById = async (req, res) => {
+    const data = await Users.findById(req.params.id)
+    const imageDir = path.join(__dirname, '../../', 'uploads/licenseImage/' + data.licenseImage)
+    const defaultDir = path.join(__dirname, '../../', 'uploads/licenseImage/nobike.jpeg')
 
-    if(fs.existsSync( imageDir )){
+    if (fs.existsSync(imageDir)) {
         res.sendFile(imageDir)
-    }else{
+    } else {
         res.sendFile(defaultDir)
     }
-   
+
 }
 
 
@@ -77,15 +77,18 @@ const changePassword = async (req, res) => {
     //findByIdandUpdate(req.params.id, {password: req.body.newPassword})
 }
 const changeUserDetails = async (req, res) => {
+    console.log(req.body)
     try {
         //to check the current details of user
-        await Users.findByIdAndUpdate(req.params.id,{ $set: req.body })
+        await Users.findByIdAndUpdate(req.params.id, { $set: req.body })
         const data = await Users.findById(req.params.id)
+        console.log(data)
+        const { password, ...otherFields } = data._doc
         if (data) {
             res.json({
                 msg: "Details changed successfully",
                 success: true,
-                userDetails: data
+                userDetails: otherFields
             })
         }
     } catch (error) {
