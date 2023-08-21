@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import Header from '@/components/Header'
-import Link from 'next/link'
-import Heroimg from '../../../public/assets/fewa-banner.jpeg'
-import Footer from '@/components/Footer'
+import styles from '../../styles/map.module.css'
+import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import { FloatButton } from 'antd';
+import priceMapping from '../../config/priceMapping.json'
 import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF} from '@react-google-maps/api';
-import { Tabs } from 'antd';
 import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
 export default function index() {
   const {pickUpAddr,pickUpCords,dropAddr, dropCords} = useSelector(state=>state.rides)    
@@ -13,31 +12,18 @@ export default function index() {
   const [currentPosition, setCurrentPosition]= useState({})
   const [currentPositionDrop, setCurrentPositionDrop]= useState({})
 
- 
-  
+
   useEffect(() => {
       navigator?.geolocation?.getCurrentPosition(position=>setCurrentPosition({lat: position.coords.latitude, lng: position.coords.longitude}))
   }, [])
   const dispatch =useDispatch()
   const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
-const containerStyle = {
-  width: '400px',
-  height: '400px'
-};
+    const containerStyle = {
+      width: '100vw',
+      height: '100vh'
+    };
 
 const center = {"lat":27.6854872,"lng":85.3447924}
-  const [tabId, setTabId] = useState(1)
-  const items = [
-    {
-      key: 1,
-      label: `Passenger mode`,
-    },
-    {
-      key: 2,
-      label: `Drive mode`, 
-    },
-  ];
-
   const handleDragEnd = (e)=> {
    const {lat, lng}  = e.latLng
     const pickUpCords = {lat:lat(), lng: lng()}
@@ -65,21 +51,41 @@ const center = {"lat":27.6854872,"lng":85.3447924}
   const onChange = (key) => {
     setTabId(key)
   };
-  const UserCard = ()=>{
+
+  const FloatBtn = () => (
+    <>
+    
+      <FloatButton.Group
+        trigger="hover"
+        type="primary"
+        style={{
+          right: 94,
+        }}
+        icon={<CustomerServiceOutlined />}
+      >
+        <FloatButton />
+        <FloatButton icon={<CommentOutlined />} />
+      </FloatButton.Group>
+    </>
+  );
+
+  const MapView = ()=>{
+    
+
     const pickUpRef = useRef(null);
     const destRef = useRef(null);
-
+    const [selectedVehicle, setSelectedVehicle] = useState('bike')
     const handlePickUpChange = ()=> {
       dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
     }
+    const distance = 100
     const handleDestChange = ()=> {
       dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
     }
+    const {pricePerUnitKm,basePrice,nightPricePercentile } =priceMapping[selectedVehicle]
     const generateCenter = () => {
-      if(formStep ===1 &&  currentPosition.lat){
-        return currentPosition
-      }else if(formStep ===2 &&  currentPositionDrop.lat){
-        return currentPositionDrop
+      if(pickUpCords.lat){
+        return pickUpCords
       }else{
         return center
       }
@@ -90,74 +96,37 @@ const center = {"lat":27.6854872,"lng":85.3447924}
     }
     return(
       <div style={{ display:"flex", gap:'2rem'}}>
-        <div>
-           <h2>Request a ride now </h2>
-              <>
-                {isLoaded && formStep ==1 && (
-                  <>
-           
-                  <Autocomplete 
-                    onPlaceChanged={handlePickUpChange}
-                  key={1}>
-                
-                  <input type='text' 
-                    ref={pickUpRef}
-                   defaultValue={pickUpAddr}
-                  placeholder='Pick up address'/>
-                  </Autocomplete>
-                  <button onClick={()=> setFormStep(2)}>Next</button>
-                  </>
-                )}
-
-
-              {isLoaded && formStep== 2 && (
-                  <>
-                <form>
-                  <Autocomplete 
-                    onPlaceChanged={handleDestChange}
-                  key={1}>
-                  <input type='text' 
-                    ref={destRef}
-                    defaultValue={dropAddr}
-                  placeholder='Destination address'/>
-                  </Autocomplete>
-                  </form>
-                  <button onClick={()=>setFormStep(1)}>Previous</button>
-                  </>
-                )}
-
-                  </>
-                <div className='btn'>
-                  <Link href='/map' >Proceed</Link>
-                </div>
-        </div>
-                <div>
+    
       {isLoaded ? (
         <>
          
           <GoogleMap
           mapContainerStyle={containerStyle}
           center={generateCenter()}
-          zoom={14}
+          zoom={12}
         >
-            {formStep===1 && (
               <MarkerF 
               onDragEnd={handleDragEnd}
-              draggable ={true}
               onLoad={onLoad}
-              position={currentPosition}
+              position={pickUpCords}
               />
-            )}
-            {formStep === 2 && (
+          <div className={styles.mapDrp}>
+            <p>
+            distance: {distance}  km 
+            </p>
+            <p>
+            estimated price: {(pricePerUnitKm * distance) + basePrice }  Nrs 
+            <button>Edit</button>
+            </p>
+          </div>
+       
             <MarkerF 
             onDragEnd={handleDragEndDest}
-            draggable ={true}
             // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
             onLoad={onLoad}
-            position={currentPositionDrop.lat ? currentPositionDrop: center}
+            position={dropCords}
             />
-            )}
-        
+          <FloatBtn/>
            
           { /* Child components, such as markers, info windows, etc. */ }
           <></>
@@ -167,35 +136,19 @@ const center = {"lat":27.6854872,"lng":85.3447924}
       ): "loading"}
         
       
-                </div>
+  
               
       </div>
     )
   }
 
-  const DriverCard = ()=>{
-    return(
-      <div>
-            <h2>Get in the driver’s <br/>seat and get paid</h2>
-                <div className='btn'>
-                  <a href='/driver' >Drive now</a>
-                </div>
-      </div>
-    )
-  }
+
 
   return (
     <>
-      <Header/>
-        <section className='hero' style={{backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(122, 189, 31, 0.73)),url(${Heroimg.src})`}}>
-          <div className='container'>
-            <div className='request--box'>
-            <Tabs defaultActiveKey={1} items={items} onChange={onChange} />
-             {tabId==1 ? <UserCard/> : <DriverCard/>}
+          <div>
+             <MapView/> 
             </div>
-          </div>
-        </section>
-      <Footer/>
      </>
   )
 }
