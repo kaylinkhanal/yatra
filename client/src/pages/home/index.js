@@ -5,7 +5,10 @@ import Heroimg from '../../../public/assets/fewa-banner.jpeg'
 import Footer from '@/components/Footer'
 import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF} from '@react-google-maps/api';
 import { Tabs } from 'antd';
-import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
+import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides';
+import {UserOutlined } from  '@ant-design/icons';
+
+
 export default function index() {
   const {pickUpAddr,pickUpCords} = useSelector(state=>state.rides)    
   const [formStep, setFormStep] = useState(1)
@@ -25,7 +28,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
   const items = [
     {
       key: 1,
-      label: `Passenger mode`,
+      label:   `Passenger mode`,
     },
     {
       key: 2,
@@ -59,26 +62,30 @@ const center = {"lat":27.6854872,"lng":85.3447924}
 
     
     const onLoad = marker => {
+    
+
       console.log('marker: ', marker)
     }
     return(
       <div style={{ display:"flex", gap:'2rem'}}>
-        <div>
-           <h2>Request a ride now </h2>
+        <div className='pr-4'>
+           <h2 className='font-bold  mt-2 leading-[60px]'>Let's begin our  <br /> <span className='text-[#79BE1D] font-bold'> Yatra</span> together </h2>
               <>
                 {isLoaded && formStep ==1 && (
                   <>
            
                   <Autocomplete
+                    className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
                     onPlaceChanged={handlePickUpChange}
                     key={1}>
                 <input type='text' 
+                    className='w-full outline-none'
                     ref={pickUpRef}
                     defaultValue={pickUpAddr}
                   // onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'pickUpAddr'}))} 
                   placeholder='Pick up address'/>
                   </Autocomplete>
-                  <button onClick={()=> setFormStep(2)}>Next</button>
+                  <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={()=> setFormStep(2)}>Next</button>
                   </>
                 )}
 
@@ -87,26 +94,29 @@ const center = {"lat":27.6854872,"lng":85.3447924}
                   <>
                 <form>
                   <Autocomplete 
-                    onPlaceChanged={handleDestChange}
+                    
+                  onPlaceChanged={handleDestChange}
                   key={1}>
-                  <input type='text' 
+                  <input type='text'
+                   className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]' 
                     ref={pickUpRef}
                   onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'destAddr'}))} 
                   placeholder='Destination address'/>
                   </Autocomplete>
                   </form>
-                  <button onClick={()=>setFormStep(1)}>Previous</button>
+                  <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={()=>setFormStep(1)}>Previous</button>
                   </>
                 )}
 
                   </>
-                <div className='btn'>
+                {/* <div className='btn'>
                   <a href='/passenger' >Request now</a>
-                </div>
+                </div> */}
         </div>
                 <div>
       {isLoaded ? (
         <>
+        
          
           <GoogleMap
           mapContainerStyle={containerStyle}
@@ -117,15 +127,15 @@ const center = {"lat":27.6854872,"lng":85.3447924}
               <MarkerF 
               onDragEnd={handleDragEnd}
               draggable ={true}
-              onLoad={onLoad}
-              position={currentPosition}
+              onLoad={onLoad}          
+             position={currentPosition}
               />
             )}
             {formStep === 2 && (
             <MarkerF 
             // onDragEnd={handleDragEnd}
             draggable ={true}
-            icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
+            icon={{ url: "../../../public/assets/flag-icon.png", scaledSize: new window.google.maps.Size(40, 40) }}
             onLoad={onLoad}
             position={center}
             />
@@ -148,10 +158,10 @@ const center = {"lat":27.6854872,"lng":85.3447924}
 
   const DriverCard = ()=>{
     return(
-      <div>
-            <h2>Get in the driver’s <br/>seat and get paid</h2>
+      <div className='py-5'>
+            <h2 className='leading-[60px]'>Get in the driver’s <br/>seat and get <span className='text-[#79BE1D] font-bold'>Paid! </span> </h2>
                 <div className='btn'>
-                  <a href='/driver' >Drive now</a>
+                  <a className='bg-black px-8 rounded-[20px] mt-10 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' href='/driver' >Drive now</a>
                 </div>
       </div>
     )
