@@ -14,6 +14,7 @@
     "antd": "^5.7.2",
     "autoprefixer": "10.4.14",
     "formik": "^2.4.2",
+    "geolib": "^3.3.4",
     "next": "13.4.9",
     "postcss": "8.4.26",
     "react": "18.2.0",

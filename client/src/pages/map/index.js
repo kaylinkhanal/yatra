@@ -6,6 +6,7 @@ import { FloatButton } from 'antd';
 import priceMapping from '../../config/priceMapping.json'
 import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF} from '@react-google-maps/api';
 import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
+import { getDistance } from 'geolib';
 export default function index() {
   const {pickUpAddr,pickUpCords,dropAddr, dropCords} = useSelector(state=>state.rides)    
   const [formStep, setFormStep] = useState(1)
@@ -74,14 +75,19 @@ const center = {"lat":27.6854872,"lng":85.3447924}
 
     const pickUpRef = useRef(null);
     const destRef = useRef(null);
+    const  [isEdit, setIsEdit] = useState(false)
     const [selectedVehicle, setSelectedVehicle] = useState('bike')
-    const handlePickUpChange = ()=> {
-      dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
-    }
-    const distance = 100
-    const handleDestChange = ()=> {
-      dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
-    }
+    // const handlePickUpChange = ()=> {
+    //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
+    // }
+
+    const distance = getDistance(
+      pickUpCords,
+      dropCords
+      );
+    // const handleDestChange = ()=> {
+    //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
+    // }
     const {pricePerUnitKm,basePrice,nightPricePercentile } =priceMapping[selectedVehicle]
     const generateCenter = () => {
       if(pickUpCords.lat){
@@ -90,7 +96,11 @@ const center = {"lat":27.6854872,"lng":85.3447924}
         return center
       }
     }
-    
+    const initialPrice =(pricePerUnitKm * (distance/1000)) + basePrice
+    const [estimatedPrice, setEstimatedPrice] = useState(initialPrice)
+    useEffect(() => {
+      console.log(distance, estimatedPrice)
+    }, [estimatedPrice])
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
@@ -106,17 +116,22 @@ const center = {"lat":27.6854872,"lng":85.3447924}
           zoom={12}
         >
               <MarkerF 
+                 draggable={true}
               onDragEnd={handleDragEnd}
               onLoad={onLoad}
               position={pickUpCords}
               />
           <div className={styles.mapDrp}>
             <p>
-            distance: {distance}  km 
+            distance: {distance/1000}  km 
             </p>
             <p>
-            estimated price: {(pricePerUnitKm * distance) + basePrice }  Nrs 
-            <button onClick={()=>set}>Edit</button>
+            estimated price: <><div>
+               <button onClick={()=>setEstimatedPrice(estimatedPrice+10)}>+ 10 </button><span contentEditable={isEdit}>{estimatedPrice}</span>
+               
+                <button onClick={()=>setEstimatedPrice(estimatedPrice-10)}>-10</button>
+              </div></> Nrs 
+            <button onClick={()=>setIsEdit(true)}>Edit</button>
             </p>
           </div>
        
@@ -124,6 +139,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
             onDragEnd={handleDragEndDest}
             // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
             onLoad={onLoad}
+            draggable={true}
             position={dropCords}
             />
           <FloatBtn/>
