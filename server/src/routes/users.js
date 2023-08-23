@@ -27,7 +27,4 @@ router.get('/users', UsersController.getAllUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
 router.delete('/delete-user/:id', UsersController.deleteUser)
 
-
-
-
 module.exports = router;
