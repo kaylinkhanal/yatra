@@ -1,10 +1,29 @@
 .mapDrp{
-    background-color: rgb(207, 252, 196);
+    background-color: #000;
     left: 13rem;
     z-index: 999;
-    border: 1px solid black;
-    border-radius: 4px;
     margin-top: 10px;
-    min-width: 300px;
     position: absolute;
+    color: #fff;
+    border: none;
+    opacity: 0.9;
+    padding: 10px 20px;
+}
+.bargain_price{
+    margin: 10px 0;
+}
+.bargain_price button{
+    margin: 0 15px;
+    background-color: transparent;
+    padding: 0 10px;
+    border:1px solid #fff;
+    transition: border-color 0.5s, background-color 0.5s, color 0.5s;
+}
+.bargain_price button:hover{
+    background-color: #7ABD1F;
+    border:1px solid #7ABD1F;
+    transition: border-color 0.5s, background-color 0.5s, color 0.5s;
+}
+.bargain_price span{
+    font-size: 1.5rem;
 }
