@@ -1,0 +1,10 @@
+.mapDrp{
+    background-color: rgb(207, 252, 196);
+    left: 13rem;
+    z-index: 999;
+    border: 1px solid black;
+    border-radius: 4px;
+    margin-top: 10px;
+    min-width: 300px;
+    position: absolute;
+}

@@ -39,8 +39,14 @@ const registerUser = async (req, res) => {
 }
 
 const getAllUsers = async (req, res) => {
-
-    const data = await Users.find().limit(req.query.size).skip((req.query.page - 1) * req.query.size)
+    let data
+    if(req.query.searchText){
+        data =await Users.find({fullName: { $regex: req.query.searchText }}).limit(req.query.size).limit(10)
+    }else if(req.query.size) {
+        data =await Users.find().limit(req.query.size).skip((req.query.page - 1) * req.query.size)
+    }else{
+        data = await Users.find()
+    }
     const count = await Users.find().count()
     if (data) {
         res.json({

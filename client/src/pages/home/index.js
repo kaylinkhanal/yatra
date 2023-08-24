@@ -1,15 +1,20 @@
 import React, { useState, useRef, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Header from '@/components/Header'
+import Link from 'next/link'
 import Heroimg from '../../../public/assets/fewa-banner.jpeg'
 import Footer from '@/components/Footer'
 import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF} from '@react-google-maps/api';
 import { Tabs } from 'antd';
 import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
 export default function index() {
-  const {pickUpAddr,pickUpCords} = useSelector(state=>state.rides)    
+  const {pickUpAddr,pickUpCords,dropAddr, dropCords} = useSelector(state=>state.rides)    
   const [formStep, setFormStep] = useState(1)
   const [currentPosition, setCurrentPosition]= useState({})
+  const [currentPositionDrop, setCurrentPositionDrop]= useState({})
+
+ 
+  
   useEffect(() => {
       navigator?.geolocation?.getCurrentPosition(position=>setCurrentPosition({lat: position.coords.latitude, lng: position.coords.longitude}))
   }, [])
@@ -43,6 +48,20 @@ const center = {"lat":27.6854872,"lng":85.3447924}
     setCurrentPosition(pickUpCords)
    dispatch(setPickUpCords(pickUpCords))
   }
+
+  const handleDragEndDest = (e)=> {
+    debugger;
+    const {lat, lng}  = e.latLng
+     const dropCords = {lat:lat(), lng: lng()}
+     fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
+     .then(res => res.json())
+     .then(data =>  dispatch(setAddress({inputField: data.features[0].properties.formatted, flag:'dropAddr'}))
+         )
+     setCurrentPositionDrop(dropCords)
+    dispatch(setDropCords(dropCords))
+   }
+
+  
   const onChange = (key) => {
     setTabId(key)
   };
@@ -54,9 +73,17 @@ const center = {"lat":27.6854872,"lng":85.3447924}
       dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
     }
     const handleDestChange = ()=> {
-      dispatch(setAddress({inputField: destRef.current.value, flag:'destAddr'}))
+      dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
     }
-
+    const generateCenter = () => {
+      if(formStep ===1 &&  currentPosition.lat){
+        return currentPosition
+      }else if(formStep ===2 &&  currentPositionDrop.lat){
+        return currentPositionDrop
+      }else{
+        return center
+      }
+    }
     
     const onLoad = marker => {
       console.log('marker: ', marker)
@@ -74,8 +101,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
                     key={1}>
                 <input type='text' 
                     ref={pickUpRef}
-                    defaultValue={pickUpAddr}
-                  // onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'pickUpAddr'}))} 
+                   defaultValue={pickUpAddr}
                   placeholder='Pick up address'/>
                   </Autocomplete>
                   <button onClick={()=> setFormStep(2)}>Next</button>
@@ -90,8 +116,8 @@ const center = {"lat":27.6854872,"lng":85.3447924}
                     onPlaceChanged={handleDestChange}
                   key={1}>
                   <input type='text' 
-                    ref={pickUpRef}
-                  onChange={(e)=> dispatch(setAddress({inputField: e.target.value, flag:'destAddr'}))} 
+                    ref={destRef}
+                    defaultValue={dropAddr}
                   placeholder='Destination address'/>
                   </Autocomplete>
                   </form>
@@ -101,7 +127,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
 
                   </>
                 <div className='btn'>
-                  <a href='/passenger' >Request now</a>
+                  <Link href='/map' >Proceed</Link>
                 </div>
         </div>
                 <div>
@@ -110,7 +136,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
          
           <GoogleMap
           mapContainerStyle={containerStyle}
-          center={currentPosition.lat ? currentPosition:  center}
+          center={generateCenter()}
           zoom={14}
         >
             {formStep===1 && (
@@ -123,11 +149,11 @@ const center = {"lat":27.6854872,"lng":85.3447924}
             )}
             {formStep === 2 && (
             <MarkerF 
-            // onDragEnd={handleDragEnd}
+            onDragEnd={handleDragEndDest}
             draggable ={true}
-            icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
+            // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
             onLoad={onLoad}
-            position={center}
+            position={currentPositionDrop.lat ? currentPositionDrop: center}
             />
             )}
         
