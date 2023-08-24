@@ -96,11 +96,10 @@ const center = {"lat":27.6854872,"lng":85.3447924}
                 {isLoaded && formStep ==1 && (
                   <>
            
-                  <Autocomplete 
+                  <Autocomplete
                     onPlaceChanged={handlePickUpChange}
-                  key={1}>
-                
-                  <input type='text' 
+                    key={1}>
+                <input type='text' 
                     ref={pickUpRef}
                    defaultValue={pickUpAddr}
                   placeholder='Pick up address'/>
