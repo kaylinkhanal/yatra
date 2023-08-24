@@ -4,7 +4,7 @@ import styles from '../../styles/map.module.css'
 import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 import priceMapping from '../../config/priceMapping.json'
-import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF} from '@react-google-maps/api';
+import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF,Polyline} from '@react-google-maps/api';
 import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
 import { getDistance } from 'geolib';
 export default function index() {
@@ -97,13 +97,14 @@ const center = {"lat":27.6854872,"lng":85.3447924}
       }
     }
     const initialPrice =(pricePerUnitKm * (distance/1000)) + basePrice
-    const [estimatedPrice, setEstimatedPrice] = useState(initialPrice)
+    const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
     useEffect(() => {
       console.log(distance, estimatedPrice)
     }, [estimatedPrice])
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
+    
     return(
       <div style={{ display:"flex", gap:'2rem'}}>
     
@@ -115,7 +116,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
           center={generateCenter()}
           zoom={12}
         >
-              <MarkerF 
+        <MarkerF 
                  draggable={true}
               onDragEnd={handleDragEnd}
               onLoad={onLoad}
@@ -123,16 +124,25 @@ const center = {"lat":27.6854872,"lng":85.3447924}
               />
           <div className={styles.mapDrp}>
             <p>
-            distance: {distance/1000}  km 
+            Distance: {distance/1000}  km 
             </p>
             <p>
-            estimated price: <><div>
-               <button onClick={()=>setEstimatedPrice(estimatedPrice+10)}>+ 10 </button><span contentEditable={isEdit}>{estimatedPrice}</span>
-               
-                <button onClick={()=>setEstimatedPrice(estimatedPrice-10)}>-10</button>
-              </div></> Nrs 
-            <button onClick={()=>setIsEdit(true)}>Edit</button>
+            Estimated Price: Rs {estimatedPrice}
             </p>
+            <div className={styles.bargain_price}>
+            <p onClick={()=>setIsEdit(true)}>Offer your price
+               <button onClick={()=>setEstimatedPrice(estimatedPrice+10)}>+ 10 </button>
+               <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
+               
+                <button
+                 onClick={()=>{
+                  if(estimatedPrice <= Math.ceil(initialPrice) - 50) return
+                 setEstimatedPrice(estimatedPrice-10)
+                 }
+                }
+                 >- 10</button>
+            </p>
+              </div> 
           </div>
        
             <MarkerF 
@@ -142,6 +152,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
             draggable={true}
             position={dropCords}
             />
+           
           <FloatBtn/>
            
           { /* Child components, such as markers, info windows, etc. */ }
