@@ -3,7 +3,21 @@ import { useEffect, useState } from 'react'
 import { Skeleton } from 'antd';
 import Table from '../../components/Table'
 import { Pagination } from 'antd';
+import { AutoComplete } from 'antd';
 function index() {
+
+const options = [
+  {
+    value: 'Burns Bay Road',
+  },
+  {
+    value: 'Downing Street',
+  },
+  {
+    value: 'Wall Street',
+  },
+];
+    const [searchedResult, setSearchedResult] = useState([])
     const [users, setUsers] = useState([])
     const [totalCount, setTotalCount] = useState(0)
     const fetchUserDetails = async (page = 1, size = 10) => {
@@ -12,9 +26,21 @@ function index() {
         setUsers(data.userList)
         setTotalCount(data.count)
     }
+    const searchUser = async(searchText) => {
+        const res = await fetch(`http://localhost:4000/users?searchText=${searchText}`)
+        const data = await res.json()
+        if(data){
+           const searchList=  data.userList.map((item)=>{
+                return {value: item.fullName}
+            })
+            setSearchedResult(searchList)
+        }
+        
+    }
     useEffect(() => {
         fetchUserDetails()
     }, [])
+    
     return (
         <div>
             {users.length > 0 ? (
@@ -33,7 +59,17 @@ function index() {
                     } */}
                  
                 </div>) : <Skeleton />}
-
+                <AutoComplete
+    style={{
+      width: 200,
+    }}
+    onChange={searchUser}
+    options={searchedResult}
+    placeholder="try to type `b`"
+    filterOption={(inputValue, option) =>
+      option?.value?.toUpperCase()?.indexOf(inputValue?.toUpperCase()) !== -1
+    }
+  />
         {users.length>0 ? <Table fetchUserDetails={fetchUserDetails}  users={users}/> : <Skeleton/>}
         <Pagination
                         showSizeChanger

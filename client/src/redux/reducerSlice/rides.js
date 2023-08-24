@@ -12,10 +12,7 @@ const ridesSlice = createSlice({
     initialState,
     reducers: {
       setAddress(state, actions) {
-        state.pickUpAddr= actions.payload.inputField
-        // debugger;
-        // console.log(actions.payload.)
-        // state[actions.payload.flag] = actions.payload.inputField
+        state[actions.payload.flag] = actions.payload.inputField
       },
       setPickUpCords(state, actions) {
         return {
