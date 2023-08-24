@@ -65,12 +65,6 @@ At Yatra, we understand that every moment matters in today's fast-paced world. T
 
 Our platform boasts a user-friendly interface that allows you to effortlessly book rides with a few taps on your smartphone. Whether you're headed to work, meeting friends, or exploring the city, Yatra ensures you'll always find a reliable and comfortable ride at your fingertips.
 
-Safety is our top priority. Yatra rigorously screens and trains our drivers, ensuring that you're in the hands of skilled professionals who prioritize your security throughout your journey. From real-time ride tracking to an in-app emergency button, we've incorporated features to give you peace of mind every step of the way.
-
-Yatra is more than just a transportation service; it's an eco-conscious choice. By sharing rides, you're contributing to a reduction in traffic congestion and a decrease in carbon emissions. Every ride taken with Yatra is a step towards a cleaner, healthier environment for everyone.
-
-Join our vibrant community of riders and drivers who share the same passion for efficient, sustainable, and connected travel. Whether you're a daily commuter, an occasional traveler, or someone who simply loves exploring, Yatra welcomes you to experience the future of ride-sharing – where convenience, safety, and responsibility come together for a remarkable journey. Embark on your next adventure with Yatra and let's ride towards a brighter tomorrow, together.
-
 Use the `BLANK_README.md` to get started.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -161,7 +155,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 ## Features
 
-- [x] Map
+- [x] Map integration
 - [x] Verify & upload License
 - [x] View all users as admin
 - [x] Draggable marker
@@ -170,6 +164,16 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] Edit profile
 - [x] Larger map
 - [x] Change password
+- [x] multi user login-> admin, user and rider
+- [ ] pagination, sort,search -> ride history
+- [ ] active ride: sort by distance/time
+- [ ] bookmark -> location
+- [x] price bargaining
+- [ ] multiple vehicle option
+- [ ] easy switch between rider and user
+- [ ] real time notification
+- [ ] tipping system
+- [ ] 30 sec timer
 
 ## Second Phase
 
