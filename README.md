@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/kaylinkhanal/yatra">
-    <img src="/client/public/yatra-logo.png" alt="Logo" width="80" height="80">
+    <img src="/client/public/yatra-logo.png" alt="Logo" width="160" height="90">
   </a>
 
   <h3 align="center">Yatra</h3>
