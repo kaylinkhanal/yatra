@@ -70,13 +70,13 @@ export default function index() {
   };
   const UserCard = () => {
     const pickUpRef = useRef(null);
-    const destRef = useRef(null);
+    const dropRef = useRef(null);
 
     const handlePickUpChange = () => {
       dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
     }
     const handleDestChange = () => {
-      dispatch(setAddress({ inputField: destRef.current.value, flag: 'dropAddr' }))
+      dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
     }
     const generateCenter = () => {
       if (formStep === 1 && currentPosition.lat) {
@@ -125,8 +125,9 @@ export default function index() {
                     key={1}>
                     <input type='text'
                       className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-                      ref={pickUpRef}
-                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'destAddr' }))}
+                      ref={dropRef}
+                      defaultValue={dropAddr}
+                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
                       placeholder='Destination address' />
                   </Autocomplete>
                 </form>

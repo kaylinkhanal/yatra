@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
-import { CommentOutlined, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
+import { CommentOutlined,CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 
 import priceMapping from '../../config/priceMapping.json'
@@ -82,7 +82,7 @@ export default function index() {
 
 
     const pickUpRef = useRef(null);
-    const destRef = useRef(null);
+    const dropRef = useRef(null);
     const [isEdit, setIsEdit] = useState(false)
     const [selectedVehicle, setSelectedVehicle] = useState('bike')
     // const handlePickUpChange = ()=> {
@@ -96,7 +96,7 @@ export default function index() {
     // const handleDestChange = ()=> {
     //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
     // }
-    const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle]
+    const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
     const generateCenter = () => {
       if (pickUpCords.lat) {
         return pickUpCords
@@ -163,7 +163,7 @@ export default function index() {
                 position={dropCords}
               />
 
-              <FloatBtn />
+              {/* <FloatBtn /> */}
 
               { /* Child components, such as markers, info windows, etc. */}
               <></>
@@ -181,13 +181,13 @@ export default function index() {
   //user card
   const UserCard = () => {
     const pickUpRef = useRef(null);
-    const destRef = useRef(null);
+    const dropRef = useRef(null);
 
     const handlePickUpChange = () => {
       dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
     }
     const handleDestChange = () => {
-      dispatch(setAddress({ inputField: destRef.current.value, flag: 'dropAddr' }))
+      dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
     }
     const generateCenter = () => {
       if (formStep === 1 && currentPosition.lat) {
@@ -234,8 +234,9 @@ export default function index() {
                     key={1}>
                     <input type='text'
                       className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-                      ref={pickUpRef}
-                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'destAddr' }))}
+                      ref={dropRef}
+                      defaultValue={dropAddr}
+                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
                       placeholder='Destination address' />
                   </Autocomplete>
                 </form>
@@ -267,23 +268,22 @@ export default function index() {
   );
   const vehiclesItems = [
     {
-      key: '1',
+      key: 'Bike',
       label: <span>Bike <TwitterOutlined /></span>,
-
+      
     },
     {
-      key: '2',
+      key: 'Car',
       label: <span>Car <CarOutlined /></span>,
 
     },
     {
-      key: '3',
+      key: 'Boat',
       label: <span>Boat <SmileOutlined /></span>,
     },
   ];
   //for map and simple card
-  const pickUpRef = useRef(null);
-  const destRef = useRef(null);
+
   const [isEdit, setIsEdit] = useState(false)
   const [selectedVehicle, setSelectedVehicle] = useState('bike')
   // const handlePickUpChange = ()=> {
@@ -297,7 +297,7 @@ export default function index() {
   // const handleDestChange = ()=> {
   //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
   // }
-  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle]
+  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
   const generateCenter = () => {
     if (pickUpCords.lat) {
       return pickUpCords
@@ -307,9 +307,7 @@ export default function index() {
   }
   const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
   const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
-  useEffect(() => {
-    console.log(distance, estimatedPrice)
-  }, [estimatedPrice])
+
   const onLoad = marker => {
     console.log('marker: ', marker)
   }
@@ -342,7 +340,7 @@ export default function index() {
       </div>
       <div className='flex '>
         <div className='h-screen w-2/5 bg-white'>
-          <Tabs defaultActiveKey="1" items={vehiclesItems} style={{
+          <Tabs onChange={(text)=>setSelectedVehicle(text) } defaultActiveKey="1" items={vehiclesItems} style={{
             background: 'white',
           }} centered={true} />
           <div className='flex justify-center'><UserCard></UserCard></div>
@@ -369,3 +367,5 @@ export default function index() {
 //   <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={()=> setFormStep(2)}>Next</button>
 //   </>
 // )}
+
+

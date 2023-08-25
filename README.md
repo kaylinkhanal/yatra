@@ -159,14 +159,11 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] Verify & upload License
 - [x] View all users as admin
 - [x] Draggable marker
-- [x] Price bargaining
 - [x] Edit user status
 - [x] Edit profile
 - [x] Larger map
 - [x] Change password
 - [x] multi user login-> admin, user and rider
-- [ ] pagination, sort,search -> ride history
-- [ ] active ride: sort by distance/time
 - [ ] bookmark -> location
 - [x] price bargaining
 - [ ] multiple vehicle option
@@ -174,6 +171,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] real time notification
 - [ ] tipping system
 - [ ] 30 sec timer
+- [ ] sort/multi sort ride history
 
 ## Second Phase
 
