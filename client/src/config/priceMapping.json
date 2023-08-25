@@ -6,7 +6,7 @@
     },
     "bike": {
         "pricePerUnitKm": 50,
-        "basePrice":  10,
+        "basePrice":  100,
         "nightPricePercentile": 0.2
     },
     "boat": {
