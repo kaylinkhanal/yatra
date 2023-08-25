@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from '../../styles/map.module.css'
-import { CommentOutlined, CustomerServiceOutlined } from '@ant-design/icons';
+import { CommentOutlined,CarTwoTone , CustomerServiceOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
+
 import priceMapping from '../../config/priceMapping.json'
 import { GoogleMap ,useJsApiLoader ,Autocomplete,MarkerF,Polyline} from '@react-google-maps/api';
 import {setAddress,setDropCords, setPickUpCords} from '../../redux/reducerSlice/rides'
@@ -53,19 +54,18 @@ const center = {"lat":27.6854872,"lng":85.3447924}
     setTabId(key)
   };
 
-  const FloatBtn = () => (
+  const FloatBtn = (props) => (
     <>
-    
       <FloatButton.Group
         trigger="hover"
         type="primary"
         style={{
           right: 94,
         }}
-        icon={<CustomerServiceOutlined />}
+        icon={<CommentOutlined />}
       >
-        <FloatButton />
-        <FloatButton icon={<CommentOutlined />} />
+        <FloatButton onClick={()=> props.setSelectedVehicle('car')} icon={<CarTwoTone/>}/>
+        <FloatButton onClick={()=> props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
       </FloatButton.Group>
     </>
   );
@@ -97,10 +97,13 @@ const center = {"lat":27.6854872,"lng":85.3447924}
       }
     }
     const initialPrice =(pricePerUnitKm * (distance/1000)) + basePrice
+
     const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
+
     useEffect(() => {
-      console.log(distance, estimatedPrice)
-    }, [estimatedPrice])
+      setEstimatedPrice(Math.ceil(initialPrice))
+  }, [selectedVehicle])
+
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
@@ -123,6 +126,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
               position={pickUpCords}
               />
           <div className={styles.mapDrp}>
+            {selectedVehicle}
             <p>
             Distance: {distance/1000}  km 
             </p>
@@ -132,7 +136,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
             <div className={styles.bargain_price}>
             <p onClick={()=>setIsEdit(true)}>Offer your price
                <button onClick={()=>setEstimatedPrice(estimatedPrice+10)}>+ 10 </button>
-               <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
+               NPR  <span onBlur={(e)=>setEstimatedPrice(parseInt(e.target.textContent))} contentEditable={isEdit}>{estimatedPrice}</span>
                
                 <button
                  onClick={()=>{
@@ -153,7 +157,7 @@ const center = {"lat":27.6854872,"lng":85.3447924}
             position={dropCords}
             />
            
-          <FloatBtn/>
+          <FloatBtn setSelectedVehicle={setSelectedVehicle}/>
            
           { /* Child components, such as markers, info windows, etc. */ }
           <></>
