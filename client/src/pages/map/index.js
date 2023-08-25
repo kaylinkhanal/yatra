@@ -3,6 +3,7 @@ import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
 import { CommentOutlined, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
+
 import priceMapping from '../../config/priceMapping.json'
 import { GoogleMap, useJsApiLoader, Autocomplete, MarkerF, Polyline } from '@react-google-maps/api';
 import { setAddress, setDropCords, setPickUpCords } from '../../redux/reducerSlice/rides'
@@ -61,19 +62,18 @@ export default function index() {
     setTabId(key)
   };
 
-  const FloatBtn = () => (
+  const FloatBtn = (props) => (
     <>
-
       <FloatButton.Group
         trigger="hover"
         type="primary"
         style={{
           right: 94,
         }}
-        icon={<CustomerServiceOutlined />}
+        icon={<CommentOutlined />}
       >
-        <FloatButton />
-        <FloatButton icon={<CommentOutlined />} />
+        <FloatButton onClick={()=> props.setSelectedVehicle('car')} icon={<CarTwoTone/>}/>
+        <FloatButton onClick={()=> props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
       </FloatButton.Group>
     </>
   );
@@ -106,9 +106,11 @@ export default function index() {
     }
     const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
     const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
+
     useEffect(() => {
-      console.log(distance, estimatedPrice)
-    }, [estimatedPrice])
+      setEstimatedPrice(Math.ceil(initialPrice))
+  }, [selectedVehicle])
+
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
