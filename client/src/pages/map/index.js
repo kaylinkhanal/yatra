@@ -322,7 +322,7 @@ export default function index() {
         <div className='w-28 flex hover:cursor-pointer'><CustomLogo /></div>
         <div className=''>
 
-          <Popover placement="bottom" title={userDetails.fullName} content={content} trigger="click">
+          <Popover placement="bottom" title={userDetails?.fullName} content={content} trigger="click">
 
             <Avatar
               size="large"
@@ -333,7 +333,7 @@ export default function index() {
                 marginRight: '2rem',
               }}
             >
-              {userDetails.fullName[0]}
+              {userDetails?.fullName?.[0]}
             </Avatar>
           </Popover>
         </div>
@@ -344,29 +344,7 @@ export default function index() {
             background: 'white',
           }} centered={true} />
           <div className='flex justify-center'><UserCard></UserCard></div>
-          <div>              <div className={styles.mapDrp}>
-            <p>
-              Distance: {distance / 1000}  km
-            </p>
-            <p>
-              Estimated Price: Rs {estimatedPrice}
-            </p>
-            <div className={styles.bargain_price}>
-              <p onClick={() => setIsEdit(true)}>Offer your price
-                <button onClick={() => setEstimatedPrice(estimatedPrice + 10)}>+ 10 </button>
-                <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
-
-                <button
-                  onClick={() => {
-                    if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
-                    setEstimatedPrice(estimatedPrice - 10)
-                  }
-                  }
-                >- 10</button>
-              </p>
             </div>
-          </div></div>
-        </div>
         <div className='w-3-5'><MapView /></div>
       </div>
 

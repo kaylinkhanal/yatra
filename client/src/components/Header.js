@@ -48,7 +48,7 @@ export default function Header() {
                     marginRight: '10px'
                   }}
                 >
-                  {userDetails.fullName[0]}
+                  {userDetails?.fullName?.[0]}
                 </Avatar>
               </Popover>
             </div>

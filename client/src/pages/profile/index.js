@@ -141,7 +141,7 @@ export default function Profile() {
                   width: '100%',
                 }}
               >
-                <p><span>Full Name: </span>{userDetails.fullName}</p>
+                <p><span>Full Name: </span>{userDetails?.fullName}</p>
                 <p><span>Email: </span><a href={`mailto:${userDetails.email}`}>{userDetails.email}</a></p>
                 <p><span>Phone: </span>{userDetails.phoneNumber}</p>
               </Card>
