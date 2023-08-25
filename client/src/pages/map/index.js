@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
-import { CommentOutlined,CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
+import { CommentOutlined, CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 
 import priceMapping from '../../config/priceMapping.json'
@@ -16,7 +16,6 @@ import Link from 'next/link';
 
 
 export default function index() {
-  const [mapWidth, setMatWidth] = useState('90rem')
   const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
   const [formStep, setFormStep] = useState(1)
   const [currentPosition, setCurrentPosition] = useState({})
@@ -29,7 +28,7 @@ export default function index() {
   const dispatch = useDispatch()
   const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
   const containerStyle = {
-    width: mapWidth,
+    width: '100vw',
     height: '95vh'
   };
 
@@ -72,8 +71,8 @@ export default function index() {
         }}
         icon={<CommentOutlined />}
       >
-        <FloatButton onClick={()=> props.setSelectedVehicle('car')} icon={<CarTwoTone/>}/>
-        <FloatButton onClick={()=> props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('car')} icon={<CarTwoTone />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
       </FloatButton.Group>
     </>
   );
@@ -109,71 +108,63 @@ export default function index() {
 
     useEffect(() => {
       setEstimatedPrice(Math.ceil(initialPrice))
-  }, [selectedVehicle])
+    }, [selectedVehicle])
 
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
 
     return (
-      <div style={{ display: "flex", gap: '2rem' }}>
-
+      <div >
         {isLoaded ? (
-          <>
+          <div>          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={generateCenter()}
+            zoom={12}
+          >
+            <MarkerF
+              draggable={true}
+              onDragEnd={handleDragEnd}
+              onLoad={onLoad}
+              position={pickUpCords}
+            />
+            <div className={styles.mapDrp}>
+              <p>
+                Distance: {distance / 1000}  km
+              </p>
+              <p>
+                Estimated Price: Rs {estimatedPrice}
+              </p>
+              <div className={styles.bargain_price}>
+                <p onClick={() => setIsEdit(true)}>Offer your price
+                  <button onClick={() => setEstimatedPrice(estimatedPrice + 10)}>+ 10 </button>
+                  <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
 
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={generateCenter()}
-              zoom={12}
-            >
-              <MarkerF
-                draggable={true}
-                onDragEnd={handleDragEnd}
-                onLoad={onLoad}
-                position={pickUpCords}
-              />
-              <div className={styles.mapDrp}>
-                <p>
-                  Distance: {distance / 1000}  km
+                  <button
+                    onClick={() => {
+                      if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
+                      setEstimatedPrice(estimatedPrice - 10)
+                    }
+                    }
+                  >- 10</button>
                 </p>
-                <p>
-                  Estimated Price: Rs {estimatedPrice}
-                </p>
-                <div className={styles.bargain_price}>
-                  <p onClick={() => setIsEdit(true)}>Offer your price
-                    <button onClick={() => setEstimatedPrice(estimatedPrice + 10)}>+ 10 </button>
-                    <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
-
-                    <button
-                      onClick={() => {
-                        if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
-                        setEstimatedPrice(estimatedPrice - 10)
-                      }
-                      }
-                    >- 10</button>
-                  </p>
-                </div>
               </div>
+            </div>
 
-              <MarkerF
-                onDragEnd={handleDragEndDest}
-                // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
-                onLoad={onLoad}
-                draggable={true}
-                position={dropCords}
-              />
+            <MarkerF
+              onDragEnd={handleDragEndDest}
+              // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
+              onLoad={onLoad}
+              draggable={true}
+              position={dropCords}
+            />
 
-              {/* <FloatBtn /> */}
+            {/* <FloatBtn /> */}
 
-              { /* Child components, such as markers, info windows, etc. */}
-              <></>
-            </GoogleMap>
-          </>
-
+            { /* Child components, such as markers, info windows, etc. */}
+            <></>
+          </GoogleMap></div>
         ) : "loading"}
-
-
-
 
       </div>
     )
@@ -208,6 +199,7 @@ export default function index() {
       <div>      <div style={{ display: "flex", gap: '2rem' }}>
         <div className='pr-4'>
           <>
+
             {isLoaded && (
               <>
 
@@ -221,6 +213,7 @@ export default function index() {
                     defaultValue={pickUpAddr}
                     placeholder='Pick up address' />
                 </Autocomplete>
+
               </>
             )}
 
@@ -229,22 +222,22 @@ export default function index() {
               <>
                 <form>
                   <Autocomplete
-
                     onPlaceChanged={handleDestChange}
-                    key={1}>
+                    key={2}>
                     <input type='text'
                       className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
                       ref={dropRef}
                       defaultValue={dropAddr}
-                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                      // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
                       placeholder='Destination address' />
                   </Autocomplete>
                 </form>
+
               </>
             )}
 
           </>
-          <div className='bg-green-400 rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center '>
+          <div className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]'>
             <Link href='/map' >Proceed</Link>
           </div>
         </div>
@@ -261,7 +254,6 @@ export default function index() {
   const { isLoggedIn, userDetails } = useSelector(state => state.users)
   const content = (
     <div>
-
       <Link href="/profile">Profile</Link>
       <p onClick={userLogout}>Logout</p>
     </div>
@@ -270,7 +262,7 @@ export default function index() {
     {
       key: 'Bike',
       label: <span>Bike <TwitterOutlined /></span>,
-      
+
     },
     {
       key: 'Car',
@@ -338,34 +330,13 @@ export default function index() {
           </Popover>
         </div>
       </div>
-      <div className='flex '>
-        <div className='h-screen w-2/5 bg-white'>
-          <Tabs onChange={(text)=>setSelectedVehicle(text) } defaultActiveKey="1" items={vehiclesItems} style={{
-            background: 'white',
-          }} centered={true} />
-          <div className='flex justify-center'><UserCard></UserCard></div>
-            </div>
-        <div className='w-3-5'><MapView /></div>
+      <div >
+
+        <MapView />
       </div>
 
     </>
   )
 }
-// {isLoaded && formStep ==1 && (
-//   <>
-
-//   <Autocomplete
-//     className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-//     onPlaceChanged={handlePickUpChange}
-//     key={1}>
-// <input type='text' 
-//     className='w-full outline-none'
-//     ref={pickUpRef}
-//    defaultValue={pickUpAddr}
-//   placeholder='Pick up address'/>
-//   </Autocomplete>
-//   <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={()=> setFormStep(2)}>Next</button>
-//   </>
-// )}
 
 
