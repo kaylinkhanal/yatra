@@ -1,33 +1,31 @@
 <a name="Yatra"></a>
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+
 
 <!-- PROJECT LOGO -->
-<br />
+
+
 <div align="center">
   <a href="https://github.com/kaylinkhanal/yatra">
-    <img src="/client/public/yatra-logo.png" alt="Logo" width="160" height="90">
+    <img src="https://github.com/kaylinkhanal/yatra/assets/123483889/8b4e805a-c8f2-4023-9bf4-f4c1c7a63205" alt="Logo" >
   </a>
 
-  <h3 align="center">Yatra</h3>
 
-  <p align="center">
-   Let's begin our YATRA together
-    <br />
-    <a href="#"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="#">View Demo</a>
-    ·
-    <a href="https://github.com/kaylinkhanal/yatra/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/kaylinkhanal/yatra/issues">Request Feature</a>
-  </p>
+  
+   
+  
+
 </div>
+<p align='center'> 
+    <a href="https://github.com/kaylinkhanal/yatra/issues">Report Bug</a> 
+   |
+    <a href="https://github.com/kaylinkhanal/yatra/issues">Request Feature</a>
+  |
+    <a href="https://github.com/kaylinkhanal/yatra/">Contribute to Project</a>
+    
+
+</p>
+  
+
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -60,22 +58,57 @@
 ## About The Project
 
 Welcome to Yatra, your ultimate destination for convenient and efficient ride-sharing experiences. Yatra revolutionizes the way you travel, connecting riders and drivers seamlessly through a cutting-edge platform designed to enhance your journeys.
-
-At Yatra, we understand that every moment matters in today's fast-paced world. That's why we've crafted a service that goes beyond just getting you from point A to point B. Yatra is more than a ride; it's an adventure, a connection, and a step towards a greener future.
-
+ Yatra is more than a ride; it's an adventure, a connection, and a step towards a greener future.
 Our platform boasts a user-friendly interface that allows you to effortlessly book rides with a few taps on your smartphone. Whether you're headed to work, meeting friends, or exploring the city, Yatra ensures you'll always find a reliable and comfortable ride at your fingertips.
 
-Use the `BLANK_README.md` to get started.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 ### Built With
 
-- [![Next][Next.js]][Next-url]
-- [![React][React.js]][React-url]
-- ![Node](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-- ![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
-- ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+ [![Next][Next.js]][Next-url]  <br>
+ [![React][React.js]][React-url]  <br>
+ ![Node](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)  <br>
+ ![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)  <br>
+ ![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)  <br>
+
+
+## Features
+
+- [x] Map integration
+- [x] Verify & upload License
+- [x] View all users as admin
+- [x] Draggable marker
+- [x] Edit user status
+- [x] Edit profile
+- [x] Larger map
+- [x] Change password
+- [x] multi user login-> admin, user and rider
+- [ ] bookmark -> location
+- [x] price bargaining
+- [ ] multiple vehicle option
+- [ ] easy switch between rider and user
+- [ ] real time notification
+- [ ] tipping system
+- [ ] 30 sec timer
+- [ ] sort/multi sort ride history
+
+
+
+<!-- ROADMAP -->
+
+## Roadmap
+
+### First Phase
+
+- [x] Login
+- [x] Register
+
+
+
+### Second Phase
+
+See the [open issues](https://github.com/kaylinkhanal/yatra/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -144,40 +177,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ROADMAP -->
-
-## Roadmap
-
-## First Phase
-
-- [x] Login
-- [x] Register
-
-## Features
-
-- [x] Map integration
-- [x] Verify & upload License
-- [x] View all users as admin
-- [x] Draggable marker
-- [x] Edit user status
-- [x] Edit profile
-- [x] Larger map
-- [x] Change password
-- [x] multi user login-> admin, user and rider
-- [ ] bookmark -> location
-- [x] price bargaining
-- [ ] multiple vehicle option
-- [ ] easy switch between rider and user
-- [ ] real time notification
-- [ ] tipping system
-- [ ] 30 sec timer
-- [ ] sort/multi sort ride history
-
-## Second Phase
-
-See the [open issues](https://github.com/kaylinkhanal/yatra/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 
@@ -195,6 +194,7 @@ Don't forget to give the project a star! Thanks again!
 5. Open a Pull Request and wait for approval
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 
 <!-- LICENSE -->
 
@@ -214,22 +214,14 @@ Project Link: [https://github.com/kaylinkhanal/yatra](https://github.com/kaylink
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<!-- ACKNOWLEDGMENTS -->
 
-## Acknowledgments
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-- [Choose an Open Source License](https://choosealicense.com)
-- [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-- [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-- [Malven's Grid Cheatsheet](https://grid.malven.co/)
-- [Img Shields](https://shields.io)
-- [GitHub Pages](https://pages.github.com)
-- [Font Awesome](https://fontawesome.com)
-- [React Icons](https://react-icons.github.io/react-icons/search)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
