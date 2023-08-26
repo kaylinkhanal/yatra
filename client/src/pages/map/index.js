@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
-import { CommentOutlined,CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined } from '@ant-design/icons';
+import { CommentOutlined, CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 
 import priceMapping from '../../config/priceMapping.json'
@@ -16,13 +16,11 @@ import Link from 'next/link';
 
 
 export default function index() {
-  const [mapWidth, setMatWidth] = useState('90rem')
-  const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
-  const [formStep, setFormStep] = useState(1)
-  const [currentPosition, setCurrentPosition] = useState({})
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
+  const [currentPosition, setCurrentPosition] = useState({})
 
-
+  const [mapWidth, setMatWidth] = useState('70vw')
+  const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
   useEffect(() => {
     navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
   }, [])
@@ -72,18 +70,18 @@ export default function index() {
         }}
         icon={<CommentOutlined />}
       >
-        <FloatButton onClick={()=> props.setSelectedVehicle('car')} icon={<CarTwoTone/>}/>
-        <FloatButton onClick={()=> props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('car')} icon={<CarTwoTone />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
       </FloatButton.Group>
     </>
   );
 
   const MapView = () => {
 
-
     const pickUpRef = useRef(null);
     const dropRef = useRef(null);
     const [isEdit, setIsEdit] = useState(false)
+    const [estimatedPriceSuggestion, setEstimatedPriceSuggestion] = useState('')
     const [selectedVehicle, setSelectedVehicle] = useState('bike')
     // const handlePickUpChange = ()=> {
     //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
@@ -106,155 +104,226 @@ export default function index() {
     }
     const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
     const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
+    const [fixedEstimatedPrice, setFixedEstimatedPrice] = useState(Math.ceil(initialPrice))
 
     useEffect(() => {
       setEstimatedPrice(Math.ceil(initialPrice))
-  }, [selectedVehicle])
+      setFixedEstimatedPrice(Math.ceil(initialPrice))
+    }, [selectedVehicle])
 
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
-
     return (
-      <div style={{ display: "flex", gap: '2rem' }}>
+      <div>
+        <>
+          <div className=' grid grid-cols-10 '>
+            <div className='h-screen bg-white col-span-3'>
+              <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="1" items={vehiclesItems} style={{
+                background: 'white',
+              }} centered={true} />
+              <div className='flex justify-center'>
+                <div>
+                  <div className='pr-4 '>
+                    <>
+                      {isLoaded && (
+                        <>
 
-        {isLoaded ? (
-          <>
+                          <Autocomplete
+                            className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
+                            onPlaceChanged={handlePickUpChange}
+                            key={1}>
+                            <input type='text'
+                              className='w-full outline-none'
+                              ref={pickUpRef}
+                              defaultValue={pickUpAddr}
+                              placeholder='Pick up address' />
+                          </Autocomplete>
+                        </>
+                      )}
 
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={generateCenter()}
-              zoom={12}
-            >
-              <MarkerF
-                draggable={true}
-                onDragEnd={handleDragEnd}
-                onLoad={onLoad}
-                position={pickUpCords}
-              />
-              <div className={styles.mapDrp}>
-                <p>
-                  Distance: {distance / 1000}  km
-                </p>
-                <p>
-                  Estimated Price: Rs {estimatedPrice}
-                </p>
-                <div className={styles.bargain_price}>
-                  <p onClick={() => setIsEdit(true)}>Offer your price
-                    <button onClick={() => setEstimatedPrice(estimatedPrice + 10)}>+ 10 </button>
-                    <span contentEditable={isEdit}>NPR {estimatedPrice}</span>
 
-                    <button
-                      onClick={() => {
-                        if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
-                        setEstimatedPrice(estimatedPrice - 10)
-                      }
-                      }
-                    >- 10</button>
-                  </p>
+                      {isLoaded && (
+                        <>
+                          <form>
+                            <Autocomplete
+
+                              onPlaceChanged={handleDestChange}
+                              key={1}>
+                              <input type='text'
+                                className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
+                                ref={dropRef}
+                                defaultValue={dropAddr}
+                                onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                                placeholder='Destination address' />
+                            </Autocomplete>
+                          </form>
+                        </>
+                      )}
+
+                    </>
+                    <div >
+                      <div onClick={() => setIsEdit(true)} >
+                        <div className='text-gray-500'> Offer your price </div>
+                        <div className='mt-2 flex gap-5 justify-center align-top'>
+                          <button
+                            className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
+                            onClick={() => {
+                              if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
+                              setEstimatedPrice(estimatedPrice - 10)
+                            }
+                            }
+
+                          >- 10</button>
+
+                          <div className='flex gap-1 hover:cursor-pointer '>
+                            NPR
+                            <div contentEditable={isEdit}>{estimatedPrice} </div>
+                          </div>
+
+                          <button onClick={() => setEstimatedPrice(estimatedPrice + 10)} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
+                        </div>
+                      </div>
+                      <div className='text-green-600 mt-1' style={{
+                        display: `${estimatedPriceSuggestion}`,
+
+
+                      }} >
+                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                        Estimated Price: Rs {fixedEstimatedPrice}
+                      </div>
+                    </div>
+                    <div className='bg-black text-white rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center mt-5'>
+                      <Link href='/map' >Proceed</Link>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p>
+                      Distance: {distance / 1000}  km
+                    </p>
+                    {/* <p>
+                      Estimated Price: Rs {fixedEstimatedPrice}
+                    </p> */}
+                  </div>
+                  <div>
+                  </div>
                 </div>
               </div>
+            </div>
+            <div className='col-span-7'>
+              <div style={{ display: "flex", gap: '2rem' }}>
+                {isLoaded ? (
+                  <>
+                    <GoogleMap
+                      mapContainerStyle={containerStyle}
+                      center={generateCenter()}
+                      zoom={13}
+                    >
+                      <MarkerF
+                        draggable={true}
+                        onDragEnd={handleDragEnd}
+                        onLoad={onLoad}
+                        position={pickUpCords}
+                      />
+                      <MarkerF
+                        onDragEnd={handleDragEndDest}
+                        // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
+                        onLoad={onLoad}
+                        draggable={true}
+                        position={dropCords}
+                      />
+                      {/* <FloatBtn /> */}
+                      { /* Child components, such as markers, info windows, etc. */}
+                      <></>
+                    </GoogleMap>
+                  </>
+                ) : "loading"}
+              </div>
+            </div>
+          </div>
 
-              <MarkerF
-                onDragEnd={handleDragEndDest}
-                // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
-                onLoad={onLoad}
-                draggable={true}
-                position={dropCords}
-              />
-
-              {/* <FloatBtn /> */}
-
-              { /* Child components, such as markers, info windows, etc. */}
-              <></>
-            </GoogleMap>
-          </>
-
-        ) : "loading"}
-
-
-
+        </>
 
       </div>
     )
   }
   //user card
-  const UserCard = () => {
-    const pickUpRef = useRef(null);
-    const dropRef = useRef(null);
+  // const UserCard = () => {
+  //   const pickUpRef = useRef(null);
+  //   const dropRef = useRef(null);
 
-    const handlePickUpChange = () => {
-      dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
-    }
-    const handleDestChange = () => {
-      dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
-    }
-    const generateCenter = () => {
-      if (formStep === 1 && currentPosition.lat) {
-        return currentPosition
-      } else if (formStep === 2 && currentPositionDrop.lat) {
-        return currentPositionDrop
-      } else {
-        return center
-      }
-    }
+  //   const handlePickUpChange = () => {
+  //     dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
+  //   }
+  //   const handleDestChange = () => {
+  //     dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
+  //   }
+  //   const generateCenter = () => {
+  //     if (formStep === 1 && currentPosition.lat) {
+  //       return currentPosition
+  //     } else if (formStep === 2 && currentPositionDrop.lat) {
+  //       return currentPositionDrop
+  //     } else {
+  //       return center
+  //     }
+  //   }
 
-    const onLoad = marker => {
-
-
-      console.log('marker: ', marker)
-    }
-    return (
-      <div>      <div style={{ display: "flex", gap: '2rem' }}>
-        <div className='pr-4'>
-          <>
-            {isLoaded && (
-              <>
-
-                <Autocomplete
-                  className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-                  onPlaceChanged={handlePickUpChange}
-                  key={1}>
-                  <input type='text'
-                    className='w-full outline-none'
-                    ref={pickUpRef}
-                    defaultValue={pickUpAddr}
-                    placeholder='Pick up address' />
-                </Autocomplete>
-              </>
-            )}
+  //   const onLoad = marker => {
 
 
-            {isLoaded && (
-              <>
-                <form>
-                  <Autocomplete
+  //     console.log('marker: ', marker)
+  //   }
+  //   return (
+  //     <div>      <div style={{ display: "flex", gap: '2rem' }}>
+  //       <div className='pr-4'>
+  //         <>
+  //           {isLoaded && (
+  //             <>
 
-                    onPlaceChanged={handleDestChange}
-                    key={1}>
-                    <input type='text'
-                      className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-                      ref={dropRef}
-                      defaultValue={dropAddr}
-                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
-                      placeholder='Destination address' />
-                  </Autocomplete>
-                </form>
-              </>
-            )}
+  //               <Autocomplete
+  //                 className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
+  //                 onPlaceChanged={handlePickUpChange}
+  //                 key={1}>
+  //                 <input type='text'
+  //                   className='w-full outline-none'
+  //                   ref={pickUpRef}
+  //                   defaultValue={pickUpAddr}
+  //                   placeholder='Pick up address' />
+  //               </Autocomplete>
+  //             </>
+  //           )}
 
-          </>
-          <div className='bg-green-400 rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center '>
-            <Link href='/map' >Proceed</Link>
-          </div>
-        </div>
-        <div>
-        </div>
-      </div></div>
-    )
-  }
+
+  //           {isLoaded && (
+  //             <>
+  //               <form>
+  //                 <Autocomplete
+
+  //                   onPlaceChanged={handleDestChange}
+  //                   key={1}>
+  //                   <input type='text'
+  //                     className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
+  //                     ref={dropRef}
+  //                     defaultValue={dropAddr}
+  //                     onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+  //                     placeholder='Destination address' />
+  //                 </Autocomplete>
+  //               </form>
+  //             </>
+  //           )}
+
+  //         </>
+  //         <div className='bg-green-400 rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center '>
+  //           <Link href='/map' >Proceed</Link>
+  //         </div>
+  //       </div>
+  //       <div>
+  //       </div>
+  //     </div></div>
+  //   )
+  // }
   //navbar
-  const router = useRouter()
   const userLogout = () => {
     dispatch(handleLogout())
   }
@@ -270,7 +339,7 @@ export default function index() {
     {
       key: 'Bike',
       label: <span>Bike <TwitterOutlined /></span>,
-      
+
     },
     {
       key: 'Car',
@@ -306,10 +375,19 @@ export default function index() {
     }
   }
   const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
-  const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
 
   const onLoad = marker => {
     console.log('marker: ', marker)
+  }
+  //usercard content
+  const pickUpRef = useRef(null);
+  const dropRef = useRef(null);
+
+  const handlePickUpChange = () => {
+    dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
+  }
+  const handleDestChange = () => {
+    dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
   }
 
 
@@ -339,13 +417,7 @@ export default function index() {
         </div>
       </div>
       <div className='flex '>
-        <div className='h-screen w-2/5 bg-white'>
-          <Tabs onChange={(text)=>setSelectedVehicle(text) } defaultActiveKey="1" items={vehiclesItems} style={{
-            background: 'white',
-          }} centered={true} />
-          <div className='flex justify-center'><UserCard></UserCard></div>
-            </div>
-        <div className='w-3-5'><MapView /></div>
+        <div ><MapView /></div>
       </div>
 
     </>

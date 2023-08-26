@@ -155,7 +155,7 @@ export default function index() {
                     onDragEnd={handleDragEnd}
                     draggable={true}
                     onLoad={onLoad}
-                    position={currentPosition}
+                    position={currentPositionDrop.lat ? currentPositionDrop : center}
                   />
                 )}
                 {formStep === 2 && (
