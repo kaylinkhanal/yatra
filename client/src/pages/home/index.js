@@ -5,9 +5,10 @@ import Link from 'next/link'
 import Heroimg from '../../../public/assets/fewa-banner.jpeg'
 import Footer from '@/components/Footer'
 import { GoogleMap, useJsApiLoader, Autocomplete, MarkerF } from '@react-google-maps/api';
-import { Tabs } from 'antd';
+import { Button, Tabs } from 'antd';
 import { setAddress, setDropCords, setPickUpCords } from '../../redux/reducerSlice/rides';
 import { UserOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router'
 
 
 export default function index() {
@@ -15,6 +16,7 @@ export default function index() {
   const [formStep, setFormStep] = useState(1)
   const [currentPosition, setCurrentPosition] = useState({})
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
+  const router = useRouter;
 
 
 
@@ -120,25 +122,27 @@ export default function index() {
               <>
                 <form>
                   <Autocomplete
-
                     onPlaceChanged={handleDestChange}
-                    key={1}>
+                    key={2}>
                     <input type='text'
                       className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
                       ref={dropRef}
                       defaultValue={dropAddr}
-                      onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                      // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
                       placeholder='Destination address' />
                   </Autocomplete>
                 </form>
-                <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
+                <div className='flex gap-10'>
+                  <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
+                  {formStep == 2 ? <Link href={'/map'} className='m-0 p-0'>
+                    <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px] '>Proceed</button>
+                  </Link> : null}
+                </div>
               </>
             )}
 
           </>
-          <div className='btn'>
-            <Link href='/map' >Proceed</Link>
-          </div>
+
         </div>
         <div>
           {isLoaded ? (
@@ -155,7 +159,7 @@ export default function index() {
                     onDragEnd={handleDragEnd}
                     draggable={true}
                     onLoad={onLoad}
-                    position={currentPositionDrop.lat ? currentPositionDrop : center}
+                    position={currentPosition.lat ? currentPosition : center}
                   />
                 )}
                 {formStep === 2 && (
