@@ -174,7 +174,19 @@ export default function index() {
 
                     </>
                     <div >
-                      <div onClick={() => setIsEdit(true)} >
+                    <p className='mt-2 mb-2'>
+                      Distance: {distance / 1000}  km
+                    </p>
+                     <div className='text-green-600 mt-1 mb-2'  >
+                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                        Estimated Price: Rs {fixedEstimatedPrice}
+                      </div>
+                  
+                    {isBargained && <div className='text-green-600 mt-1 mb-2'  >
+                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                        offered Price: Rs {estimatedPrice}
+                      </div>}
+                      <div onClick={() => setIsEdit(true)} className='mt-4 mb-4' >
                         <div className='text-gray-500'> Offer your price </div>
                         <div className='mt-2 flex gap-5 justify-center align-top'>
                           <button
@@ -182,6 +194,7 @@ export default function index() {
                             onClick={() => {
                               if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
                               setEstimatedPrice(estimatedPrice - 10)
+                              setIsBargained(true)
                             }
                             }
 
@@ -189,30 +202,23 @@ export default function index() {
 
                           <div className='flex gap-1 hover:cursor-pointer '>
                             NPR
-                            <div onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div> 
+                            <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div> 
                           </div>
 
-                          <button onClick={() => setEstimatedPrice(estimatedPrice + 10)} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
+                          <button onClick={() =>{
+                              setEstimatedPrice(estimatedPrice + 10)
+                              setIsBargained(true)
+                          }} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
                         </div>
                       </div>
-                     {isBargained && <div className='text-green-600 mt-1'  >
-                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
-                        Estimated Price: Rs {fixedEstimatedPrice}
-                      </div>}
+                     
                     </div>
-                    <div className='bg-black text-white rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center mt-5'>
+                    <div className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
                       <Link href='/map' >Proceed</Link>
                     </div>
                   </div>
 
-                  <div>
-                    <p>
-                      Distance: {distance / 1000}  km
-                    </p>
-                    {/* <p>
-                      Estimated Price: Rs {fixedEstimatedPrice}
-                    </p> */}
-                  </div>
+                  
                   <div>
                   </div>
                 </div>

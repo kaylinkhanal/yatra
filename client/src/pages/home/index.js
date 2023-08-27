@@ -113,7 +113,7 @@ export default function index() {
                     defaultValue={pickUpAddr}
                     placeholder='Pick up address' />
                 </Autocomplete>
-                <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(2)}>Next</button>
+                <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(2)}>Next</button>
               </>
             )}
 
@@ -133,9 +133,9 @@ export default function index() {
                   </Autocomplete>
                 </form>
                 <div className='flex gap-10'>
-                  <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
+                  <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
                   {formStep == 2 ? <Link href={'/map'} className='m-0 p-0'>
-                    <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px] '>Proceed</button>
+                    <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px] '>Proceed</button>
                   </Link> : null}
                 </div>
               </>
@@ -192,7 +192,7 @@ export default function index() {
       <div className='py-5'>
         <h2 className='leading-[60px]'>Get in the driver’s <br />seat and get <span className='text-[#79BE1D] font-bold'>Paid! </span> </h2>
         <div className='btn'>
-          <a className='bg-black px-8 rounded-[20px] mt-10 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' href='/driver' >Drive now</a>
+          <a className='bg-black px-8 rounded-[20px] mt-10 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]' href='/driver' >Drive now</a>
         </div>
       </div>
     )

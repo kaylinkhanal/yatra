@@ -27,3 +27,9 @@
 .bargain_price span{
     font-size: 1.5rem;
 }
+.offer_input{
+    outline:none;
+    min-width: 35px;
+    font-size: 1.5rem;
+    color:#7ABD1F;
+}
