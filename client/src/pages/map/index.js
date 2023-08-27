@@ -81,11 +81,13 @@ export default function index() {
     const pickUpRef = useRef(null);
     const dropRef = useRef(null);
     const [isEdit, setIsEdit] = useState(false)
-    const [estimatedPriceSuggestion, setEstimatedPriceSuggestion] = useState('')
+    const [isBargained, setIsBargained] = useState(false)
     const [selectedVehicle, setSelectedVehicle] = useState('bike')
     // const handlePickUpChange = ()=> {
     //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
     // }
+
+ 
 
     const distance = getDistance(
       pickUpCords,
@@ -105,7 +107,16 @@ export default function index() {
     const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
     const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
     const [fixedEstimatedPrice, setFixedEstimatedPrice] = useState(Math.ceil(initialPrice))
-
+    const handleSetChangePrice = (e)=> {
+     
+      const estPrice =Number(e.target.textContent)
+      if(estPrice> (estimatedPrice-50) ){
+       setEstimatedPrice(Number(e.target.textContent))
+      }else{
+        setEstimatedPrice(fixedEstimatedPrice)
+      }
+      setIsBargained(true)
+     }
     useEffect(() => {
       setEstimatedPrice(Math.ceil(initialPrice))
       setFixedEstimatedPrice(Math.ceil(initialPrice))
@@ -178,20 +189,16 @@ export default function index() {
 
                           <div className='flex gap-1 hover:cursor-pointer '>
                             NPR
-                            <div contentEditable={isEdit}>{estimatedPrice} </div>
+                            <div onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div> 
                           </div>
 
                           <button onClick={() => setEstimatedPrice(estimatedPrice + 10)} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
                         </div>
                       </div>
-                      <div className='text-green-600 mt-1' style={{
-                        display: `${estimatedPriceSuggestion}`,
-
-
-                      }} >
+                     {isBargained && <div className='text-green-600 mt-1'  >
                         <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
                         Estimated Price: Rs {fixedEstimatedPrice}
-                      </div>
+                      </div>}
                     </div>
                     <div className='bg-black text-white rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center mt-5'>
                       <Link href='/map' >Proceed</Link>

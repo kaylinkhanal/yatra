@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     productName: {type: String},
     licenseNumber: String,
     userId: String,
-    licenseImage: String
+    licenseImage: String,
   });
   
   const Users = mongoose.model('Users', userSchema);
