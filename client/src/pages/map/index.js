@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
-import { CommentOutlined, CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CommentOutlined, CarTwoTone, TwitterOutlined, CarOutlined, SmileOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
 
 import priceMapping from '../../config/priceMapping.json'
-import { GoogleMap, useJsApiLoader, Autocomplete, MarkerF, Polyline } from '@react-google-maps/api';
+import { GoogleMap, useJsApiLoader, Autocomplete, MarkerF, Polyline, Marker } from '@react-google-maps/api';
 import { setAddress, setDropCords, setPickUpCords } from '../../redux/reducerSlice/rides'
 import { getDistance } from 'geolib';
 import { useDispatch, useSelector } from 'react-redux'
@@ -18,16 +18,15 @@ import Link from 'next/link';
 export default function index() {
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
   const [currentPosition, setCurrentPosition] = useState({})
-
-  const [mapWidth, setMatWidth] = useState('70vw')
   const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
+  const router = useRouter()
   useEffect(() => {
     navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
   }, [])
   const dispatch = useDispatch()
   const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
   const containerStyle = {
-    width: mapWidth,
+    width: '70vw',
     height: '95vh'
   };
 
@@ -55,26 +54,61 @@ export default function index() {
     dispatch(setDropCords(dropCords))
   }
 
-
-  const onChange = (key) => {
-    setTabId(key)
-  };
-
-  const FloatBtn = (props) => (
-    <>
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{
-          right: 94,
-        }}
-        icon={<CommentOutlined />}
-      >
-        <FloatButton onClick={() => props.setSelectedVehicle('car')} icon={<CarTwoTone />} />
-        <FloatButton onClick={() => props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
-      </FloatButton.Group>
-    </>
+  const userLogout = () => {
+    dispatch(handleLogout())
+    router.push('/')
+  }
+  const { isLoggedIn, userDetails } = useSelector(state => state.users)
+  const content = (
+    <div>
+      <Link href="/profile" className='hover:text-green-500'>Profile</Link>
+      <p onClick={userLogout} className='hover:cursor-pointer hover:text-red-500'>Logout</p>
+    </div>
   );
+  const vehiclesItems = [
+    {
+      key: 'Bike',
+      label: <span>Bike <TwitterOutlined /></span>,
+
+    },
+    {
+      key: 'Car',
+      label: <span>Car <CarOutlined /></span>,
+
+    },
+    {
+      key: 'Boat',
+      label: <span>Boat <SmileOutlined /></span>,
+    },
+  ];
+  //for map and simple card
+
+  const [selectedVehicle, setSelectedVehicle] = useState('bike')
+  const distance = getDistance(
+    pickUpCords,
+    dropCords
+  );
+  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
+  const generateCenter = () => {
+    if (pickUpCords.lat) {
+      return pickUpCords
+    } else {
+      return center
+    }
+  }
+
+  const onLoad = marker => {
+    console.log('marker: ', marker)
+  }
+  const pickUpRef = useRef(null);
+  const dropRef = useRef(null);
+
+  const handlePickUpChange = () => {
+    dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
+  }
+  const handleDestChange = () => {
+    dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
+  }
 
   const MapView = () => {
 
@@ -83,19 +117,10 @@ export default function index() {
     const [isEdit, setIsEdit] = useState(false)
     const [isBargained, setIsBargained] = useState(false)
     const [selectedVehicle, setSelectedVehicle] = useState('bike')
-    // const handlePickUpChange = ()=> {
-    //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
-    // }
-
- 
-
     const distance = getDistance(
       pickUpCords,
       dropCords
     );
-    // const handleDestChange = ()=> {
-    //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
-    // }
     const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
     const generateCenter = () => {
       if (pickUpCords.lat) {
@@ -105,26 +130,28 @@ export default function index() {
       }
     }
     const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
-    const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
-    const [fixedEstimatedPrice, setFixedEstimatedPrice] = useState(Math.ceil(initialPrice))
-    const handleSetChangePrice = (e)=> {
-     
-      const estPrice =Number(e.target.textContent)
-      if(estPrice> (estimatedPrice-50) ){
-       setEstimatedPrice(Number(e.target.textContent))
-      }else{
-        setEstimatedPrice(fixedEstimatedPrice)
+    const [bargainedPrice, setbargainedPrice] = useState(Math.ceil(initialPrice))
+    const [estimatedPrice, setestimatedPrice] = useState(Math.ceil(initialPrice))
+    const handleSetChangePrice = (e) => {
+
+      const estPrice = Number(e.target.textContent)
+      if (estPrice > (bargainedPrice - 50)) {
+        setbargainedPrice(Number(e.target.textContent))
+      } else {
+        setbargainedPrice(estimatedPrice)
       }
       setIsBargained(true)
-     }
+    }
     useEffect(() => {
-      setEstimatedPrice(Math.ceil(initialPrice))
-      setFixedEstimatedPrice(Math.ceil(initialPrice))
+      setbargainedPrice(Math.ceil(initialPrice))
+      setestimatedPrice(Math.ceil(initialPrice))
     }, [selectedVehicle])
 
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
+
+
     return (
       <div>
         <>
@@ -174,51 +201,50 @@ export default function index() {
 
                     </>
                     <div >
-                    <p className='mt-2 mb-2'>
-                      Distance: {distance / 1000}  km
-                    </p>
-                     <div className='text-green-600 mt-1 mb-2'  >
-                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
-                        Estimated Price: Rs {fixedEstimatedPrice}
-                      </div>
-                  
-                    {isBargained && <div className='text-green-600 mt-1 mb-2'  >
-                        <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
-                        offered Price: Rs {estimatedPrice}
-                      </div>}
+                      <p className='mt-2 mb-2'>
+                        Distance: {distance / 1000}  km
+                      </p>
+
+
+
                       <div onClick={() => setIsEdit(true)} className='mt-4 mb-4' >
                         <div className='text-gray-500'> Offer your price </div>
                         <div className='mt-2 flex gap-5 justify-center align-top'>
                           <button
                             className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
                             onClick={() => {
-                              if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
-                              setEstimatedPrice(estimatedPrice - 10)
+                              if (bargainedPrice <= Math.ceil(initialPrice) - 50) return
+                              setbargainedPrice(bargainedPrice - 10)
                               setIsBargained(true)
                             }
                             }
 
                           >- 10</button>
 
+
                           <div className='flex gap-1 hover:cursor-pointer '>
-                            NPR
-                            <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div> 
+                            <div className='text-green-600 text-xl p-1'>NPR</div>
+                            <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{bargainedPrice} </div>
                           </div>
 
-                          <button onClick={() =>{
-                              setEstimatedPrice(estimatedPrice + 10)
-                              setIsBargained(true)
+                          <button onClick={() => {
+                            setbargainedPrice(bargainedPrice + 10)
+                            setIsBargained(true)
                           }} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
                         </div>
+                        {isBargained && <div className='text-green-600 mt-1 mb-2'  >
+                          <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                          Estimated Price: Rs {estimatedPrice}
+                        </div>}
                       </div>
-                     
+
                     </div>
-                    <div className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
-                      <Link href='/map' >Proceed</Link>
-                    </div>
+                    <button className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
+                      Proceed
+                    </button>
                   </div>
 
-                  
+
                   <div>
                   </div>
                 </div>
@@ -231,7 +257,7 @@ export default function index() {
                     <GoogleMap
                       mapContainerStyle={containerStyle}
                       center={generateCenter()}
-                      zoom={13}
+                      zoom={15}
                     >
                       <MarkerF
                         draggable={true}
@@ -246,8 +272,6 @@ export default function index() {
                         draggable={true}
                         position={dropCords}
                       />
-                      {/* <FloatBtn /> */}
-                      { /* Child components, such as markers, info windows, etc. */}
                       <></>
                     </GoogleMap>
                   </>
@@ -261,147 +285,7 @@ export default function index() {
       </div>
     )
   }
-  //user card
-  // const UserCard = () => {
-  //   const pickUpRef = useRef(null);
-  //   const dropRef = useRef(null);
-
-  //   const handlePickUpChange = () => {
-  //     dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
-  //   }
-  //   const handleDestChange = () => {
-  //     dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
-  //   }
-  //   const generateCenter = () => {
-  //     if (formStep === 1 && currentPosition.lat) {
-  //       return currentPosition
-  //     } else if (formStep === 2 && currentPositionDrop.lat) {
-  //       return currentPositionDrop
-  //     } else {
-  //       return center
-  //     }
-  //   }
-
-  //   const onLoad = marker => {
-
-
-  //     console.log('marker: ', marker)
-  //   }
-  //   return (
-  //     <div>      <div style={{ display: "flex", gap: '2rem' }}>
-  //       <div className='pr-4'>
-  //         <>
-  //           {isLoaded && (
-  //             <>
-
-  //               <Autocomplete
-  //                 className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-  //                 onPlaceChanged={handlePickUpChange}
-  //                 key={1}>
-  //                 <input type='text'
-  //                   className='w-full outline-none'
-  //                   ref={pickUpRef}
-  //                   defaultValue={pickUpAddr}
-  //                   placeholder='Pick up address' />
-  //               </Autocomplete>
-  //             </>
-  //           )}
-
-
-  //           {isLoaded && (
-  //             <>
-  //               <form>
-  //                 <Autocomplete
-
-  //                   onPlaceChanged={handleDestChange}
-  //                   key={1}>
-  //                   <input type='text'
-  //                     className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-  //                     ref={dropRef}
-  //                     defaultValue={dropAddr}
-  //                     onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
-  //                     placeholder='Destination address' />
-  //                 </Autocomplete>
-  //               </form>
-  //             </>
-  //           )}
-
-  //         </>
-  //         <div className='bg-green-400 rounded-lg py-2 px-16 border-black border-2 w-10  flex justify-center '>
-  //           <Link href='/map' >Proceed</Link>
-  //         </div>
-  //       </div>
-  //       <div>
-  //       </div>
-  //     </div></div>
-  //   )
-  // }
   //navbar
-  const userLogout = () => {
-    dispatch(handleLogout())
-  }
-  const { isLoggedIn, userDetails } = useSelector(state => state.users)
-  const content = (
-    <div>
-
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
-    </div>
-  );
-  const vehiclesItems = [
-    {
-      key: 'Bike',
-      label: <span>Bike <TwitterOutlined /></span>,
-
-    },
-    {
-      key: 'Car',
-      label: <span>Car <CarOutlined /></span>,
-
-    },
-    {
-      key: 'Boat',
-      label: <span>Boat <SmileOutlined /></span>,
-    },
-  ];
-  //for map and simple card
-
-  const [isEdit, setIsEdit] = useState(false)
-  const [selectedVehicle, setSelectedVehicle] = useState('bike')
-  // const handlePickUpChange = ()=> {
-  //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
-  // }
-
-  const distance = getDistance(
-    pickUpCords,
-    dropCords
-  );
-  // const handleDestChange = ()=> {
-  //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
-  // }
-  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
-  const generateCenter = () => {
-    if (pickUpCords.lat) {
-      return pickUpCords
-    } else {
-      return center
-    }
-  }
-  const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
-
-  const onLoad = marker => {
-    console.log('marker: ', marker)
-  }
-  //usercard content
-  const pickUpRef = useRef(null);
-  const dropRef = useRef(null);
-
-  const handlePickUpChange = () => {
-    dispatch(setAddress({ inputField: pickUpRef.current.value, flag: 'pickUpAddr' }))
-  }
-  const handleDestChange = () => {
-    dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
-  }
 
 
   return (
@@ -436,21 +320,5 @@ export default function index() {
     </>
   )
 }
-// {isLoaded && formStep ==1 && (
-//   <>
-
-//   <Autocomplete
-//     className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-//     onPlaceChanged={handlePickUpChange}
-//     key={1}>
-// <input type='text' 
-//     className='w-full outline-none'
-//     ref={pickUpRef}
-//    defaultValue={pickUpAddr}
-//   placeholder='Pick up address'/>
-//   </Autocomplete>
-//   <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#79BE1D] transition ease-in-out duration-300 text-white py-[15px]' onClick={()=> setFormStep(2)}>Next</button>
-//   </>
-// )}
 
 
