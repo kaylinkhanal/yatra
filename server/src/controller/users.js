@@ -75,13 +75,31 @@ const getLicenseImgById = async (req, res) => {
 }
 
 
-const changePassword = async (req, res) => {
-    // dbData= Users.findById(req.params.id)
-    //1. req.body.currentPassword and dbData.password
-    //bcrypt.compare(req.body.password, data.password)
-    //if true, update database=> 
-    //findByIdandUpdate(req.params.id, {password: req.body.newPassword})
-}
+const changePassword = async(req ,res) =>{
+    try{
+        const userId =req.params.id;
+        const data = await Users.findById(userId)      
+        if(data){   
+            const isMatched = await bcrypt.compare(req.body.currentPassword,data.password)
+            if(!isMatched){
+                res.status(401).json({
+                    msg: "Incorrect password",
+                    passChange: false,
+                })
+            }
+            else{
+                req.body.newPassword = await bcrypt.hash(req.body.newPassword, saltRounds)
+                await Users.findByIdAndUpdate(userId,{password: req.body.newPassword})
+                res.status(200).json({
+                    msg: "Password Changed Success",
+                    passChange: true,
+                })
+            }
+        }
+    }catch(err){
+        console.log(err);
+    }
+ }
 const changeUserDetails = async (req, res) => {
     console.log(req.body)
     try {
