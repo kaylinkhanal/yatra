@@ -86,12 +86,13 @@ Our platform boasts a user-friendly interface that allows you to effortlessly bo
 - [x] multi user login-> admin, user and rider
 - [ ] bookmark -> location
 - [x] price bargaining
-- [ ] multiple vehicle option
-- [ ] easy switch between rider and user
+- [x] multiple vehicle option
+- [ ] easy switch between rider and user*
 - [ ] real time notification
-- [ ] tipping system
+- [ ] tipping system*
 - [ ] 30 sec timer
-- [ ] sort/multi sort ride history
+- [ ] view ride history*
+- [ ] sort/multi sort
 
 
 

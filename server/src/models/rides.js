@@ -8,8 +8,8 @@ const ridesSchema = new mongoose.Schema({
   bargainedPrice: Number,
   distance: Number,
   estimatedPrice: Number,
-  passenger: String,
-  driver: String
+  passengerInfo:[{ type: Schema.Types.ObjectId, ref: 'Users' }],
+  driverInfo:[{ type: Schema.Types.ObjectId, ref: 'Users' }],
   },{
     timestamps: true
   });
