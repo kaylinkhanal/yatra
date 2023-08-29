@@ -15,21 +15,25 @@ const io = new Server(server,{
     origin: "*"
   }
 });
+
 app.use(cors())
 const port = process.env.PORT || 4000
 app.use(express.json())
 
 app.use("/",userRoute)
 
-app.post('/connection', (req,res) => {
-  console.log('a user connected');
-});
 
-// io.on('connection', (socket) => {
-//   io.on('users', (userId) => {
-//     io.emit('fdsa' ,"hi")
-//   });
-// });
+
+io.on('connection', (socket) => {
+
+ 
+    socket.on('rideDetails', (rideDetails) => {
+      console.log(rideDetails);
+    });
+
+
+
+});
 
  server.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

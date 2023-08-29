@@ -13,11 +13,19 @@ import { CustomLogo } from '@/components/Logo';
 import { handleLogout } from '../../redux/reducerSlice/users'
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { io } from 'socket.io-client';
+const URL = 'http://localhost:4000';
 
-
+export const socket = io(URL);
 export default function index() {
+
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
   const [currentPosition, setCurrentPosition] = useState({})
+  useEffect(() => {
+    socket.on('connection');
+  }, []);
+
+  const [mapWidth, setMatWidth] = useState('70vw')
   const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
   const router = useRouter()
   useEffect(() => {
@@ -112,6 +120,10 @@ export default function index() {
 
   const MapView = () => {
 
+
+    const { dropAddr, dropCords, pickUpAddr, pickUpCords } = useSelector(state => state.rides)
+    const { userDetails } = useSelector(state => state.users)
+
     const pickUpRef = useRef(null);
     const dropRef = useRef(null);
     const [isEdit, setIsEdit] = useState(false)
@@ -121,6 +133,11 @@ export default function index() {
       pickUpCords,
       dropCords
     );
+    // const handleDestChange = ()=> {
+    //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
+    // }
+
+
     const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
     const generateCenter = () => {
       if (pickUpCords.lat) {
@@ -147,8 +164,126 @@ export default function index() {
       setestimatedPrice(Math.ceil(initialPrice))
     }, [selectedVehicle])
 
+    const handleRideRequest = () => {
+      const rideDetails = {
+        dropAddr,
+        dropCords,
+        pickUpAddr,
+        pickUpCords,
+        bargainedPrice: estimatedPrice,
+        distance,
+        estimatedPrice: fixedEstimatedPrice,
+        passenger: userDetails._id
+      }
+      socket.emit("rideDetails", rideDetails);
+
+    }
     const onLoad = marker => {
       console.log('marker: ', marker)
+    }
+
+    const UserRideForm = () => {
+      return (
+        <div>
+          <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="1" items={vehiclesItems} style={{
+            background: 'white',
+          }} centered={true} />
+          <div className='flex justify-center'>
+            <div>
+              <div className='pr-4 '>
+                <>
+                  {isLoaded && (
+                    <>
+
+                      <Autocomplete
+                        className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
+                        onPlaceChanged={handlePickUpChange}
+                        key={1}>
+                        <input type='text'
+                          className='w-full outline-none'
+                          ref={pickUpRef}
+                          defaultValue={pickUpAddr}
+                          placeholder='Pick up address' />
+                      </Autocomplete>
+                    </>
+                  )}
+
+
+                  {isLoaded && (
+                    <>
+                      <form>
+                        <Autocomplete
+
+                          onPlaceChanged={handleDestChange}
+                          key={1}>
+                          <input type='text'
+                            className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
+                            ref={dropRef}
+                            defaultValue={dropAddr}
+                            onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                            placeholder='Destination address' />
+                        </Autocomplete>
+                      </form>
+                    </>
+                  )}
+
+                </>
+                <div >
+                  <p className='mt-2 mb-2'>
+                    Distance: {distance / 1000}  km
+                  </p>
+                  <div className='text-green-600 mt-1 mb-2'  >
+                    <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                    Estimated Price: Rs {fixedEstimatedPrice}
+                  </div>
+
+                  {isBargained && <div className='text-green-600 mt-1 mb-2'  >
+                    <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
+                    offered Price: Rs {estimatedPrice}
+                  </div>}
+                  <div onClick={() => setIsEdit(true)} className='mt-4 mb-4' >
+                    <div className='text-gray-500'> Offer your price </div>
+                    <div className='mt-2 flex gap-5 justify-center align-top'>
+                      <button
+                        className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
+                        onClick={() => {
+                          if (estimatedPrice <= Math.ceil(initialPrice) - 50) return
+                          setEstimatedPrice(estimatedPrice - 10)
+                          setIsBargained(true)
+                        }
+                        }
+
+                      >- 10</button>
+
+                      <div className='flex gap-1 hover:cursor-pointer '>
+                        NPR
+                        <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div>
+                      </div>
+
+                      <button onClick={() => {
+                        setEstimatedPrice(estimatedPrice + 10)
+                        setIsBargained(true)
+                      }} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
+                    </div>
+                  </div>
+
+                </div>
+                <div className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
+                  <button
+                    onClick={handleRideRequest}
+                    className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
+                  >Proceed</button>
+                </div>
+              </div>
+
+
+              <div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      )
     }
 
 
@@ -157,98 +292,7 @@ export default function index() {
         <>
           <div className=' grid grid-cols-10 '>
             <div className='h-screen bg-white col-span-3'>
-              <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="1" items={vehiclesItems} style={{
-                background: 'white',
-              }} centered={true} />
-              <div className='flex justify-center'>
-                <div>
-                  <div className='pr-4 '>
-                    <>
-                      {isLoaded && (
-                        <>
-
-                          <Autocomplete
-                            className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-                            onPlaceChanged={handlePickUpChange}
-                            key={1}>
-                            <input type='text'
-                              className='w-full outline-none'
-                              ref={pickUpRef}
-                              defaultValue={pickUpAddr}
-                              placeholder='Pick up address' />
-                          </Autocomplete>
-                        </>
-                      )}
-
-
-                      {isLoaded && (
-                        <>
-                          <form>
-                            <Autocomplete
-
-                              onPlaceChanged={handleDestChange}
-                              key={1}>
-                              <input type='text'
-                                className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-                                ref={dropRef}
-                                defaultValue={dropAddr}
-                                onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
-                                placeholder='Destination address' />
-                            </Autocomplete>
-                          </form>
-                        </>
-                      )}
-
-                    </>
-                    <div >
-                      <p className='mt-2 mb-2'>
-                        Distance: {distance / 1000}  km
-                      </p>
-
-
-
-                      <div onClick={() => setIsEdit(true)} className='mt-4 mb-4' >
-                        <div className='text-gray-500'> Offer your price </div>
-                        <div className='mt-2 flex gap-5 justify-center align-top'>
-                          <button
-                            className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
-                            onClick={() => {
-                              if (bargainedPrice <= Math.ceil(initialPrice) - 50) return
-                              setbargainedPrice(bargainedPrice - 10)
-                              setIsBargained(true)
-                            }
-                            }
-
-                          >- 10</button>
-
-
-                          <div className='flex gap-1 hover:cursor-pointer '>
-                            <div className='text-green-600 text-xl p-1'>NPR</div>
-                            <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{bargainedPrice} </div>
-                          </div>
-
-                          <button onClick={() => {
-                            setbargainedPrice(bargainedPrice + 10)
-                            setIsBargained(true)
-                          }} className=' px-3 py-1   rounded-lg bg-black text-white border-2 hover:border-green-600'>+10 </button>
-                        </div>
-                        {isBargained && <div className='text-green-600 mt-1 mb-2'  >
-                          <InfoCircleOutlined className='relative bottom-1 mr-1 ' />
-                          Estimated Price: Rs {estimatedPrice}
-                        </div>}
-                      </div>
-
-                    </div>
-                    <button className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
-                      Proceed
-                    </button>
-                  </div>
-
-
-                  <div>
-                  </div>
-                </div>
-              </div>
+              {userDetails.mode !== 'Driver' ? <UserRideForm /> : "hello"}
             </div>
             <div className='col-span-7'>
               <div style={{ display: "flex", gap: '2rem' }}>
