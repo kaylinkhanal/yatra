@@ -17,16 +17,16 @@ export default function Header() {
   const content = (
     <div>
 
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
+      <Link href="/profile" className='hover:text-green-500'>Profile</Link>
+      <p onClick={userLogout} className='hover:cursor-pointer hover:text-red-500'>Logout</p>
     </div>
   );
 
   return (
     <header className=''>
 
-      <div className="container">
-        <nav>
+      <div className="">
+        <nav className='flex justify-around mx-16'>
           <div className="logo ">
             <Link href='/'>
               <CustomLogo />
@@ -48,7 +48,7 @@ export default function Header() {
                     marginRight: '10px'
                   }}
                 >
-                  {userDetails?.fullName?.[0]}
+                  {userDetails.fullName[0]}
                 </Avatar>
               </Popover>
             </div>
