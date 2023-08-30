@@ -120,18 +120,17 @@ export default function index() {
 
             {isLoaded && formStep == 2 && (
               <>
-                <form>
-                  <Autocomplete
-                    onPlaceChanged={handleDestChange}
-                    key={2}>
-                    <input type='text'
-                      className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
-                      ref={dropRef}
-                      defaultValue={dropAddr}
-                      // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
-                      placeholder='Destination address' />
-                  </Autocomplete>
-                </form>
+                <Autocomplete
+                  className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
+                  onPlaceChanged={handleDestChange}
+                  key={2}>
+                  <input type='text'
+                    className='w-full outline-none'
+                    ref={dropRef}
+                    defaultValue={dropAddr}
+                    // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                    placeholder='Destination address' />
+                </Autocomplete>
                 <div className='flex gap-10'>
                   <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
                   {formStep == 2 ? <Link href={'/map'} className='m-0 p-0'>

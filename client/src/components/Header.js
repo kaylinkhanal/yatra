@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import { Avatar, Space, Popover } from 'antd';
 import { CustomLogo } from './Logo';
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,17 +15,15 @@ export default function Header() {
   const { isLoggedIn, userDetails } = useSelector(state => state.users)
   const content = (
     <div>
-
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
+      <Link href="/profile" className='hover:text-green-500'>Profile</Link>
+      <p onClick={userLogout} className='hover:text-red-500 hover:cursor-pointer'>Logout</p>
     </div>
   );
 
   return (
-    <header className=''>
-
-      <div className="container">
-        <nav>
+    <header >
+      <div className="">
+        <nav className='flex mx-64'>
           <div className="logo ">
             <Link href='/'>
               <CustomLogo />
@@ -37,8 +34,7 @@ export default function Header() {
             <div>
 
               <Popover placement="bottom" title={userDetails.fullName} content={content} trigger="click">
-
-                <Avatar
+                <div>                <Avatar
                   size="large"
                   style={{
                     backgroundColor: '#fde3cf',
@@ -50,11 +46,12 @@ export default function Header() {
                 >
                   {userDetails?.fullName?.[0]}
                 </Avatar>
+                  <div className='inline text-lg relative top-5'>Hi {userDetails.fullName.split(' ')[0]}</div></div>
               </Popover>
             </div>
           ) : <ul className="nav-menus">
-            <li> <a href="/login " className=''>Login</a></li>
-            <li><a className="active" href="/register">Signup</a></li>
+            <li> <Link href="/login " className=''>Login</Link></li>
+            <li><Link className="active" href="/register">Signup</Link></li>
           </ul>}
 
 
