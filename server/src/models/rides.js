@@ -6,10 +6,15 @@ const ridesSchema = new mongoose.Schema({
   pickUpAddr: {type: String},
   pickUpCords: {type: Object},
   bargainedPrice: Number,
+  rideStatus: {
+    type: String,
+    enum : ['pending','riderAccepted','cancelled'],
+    default: 'pending'
+  },
   distance: Number,
   estimatedPrice: Number,
-  passengerInfo:[{ type: Schema.Types.ObjectId, ref: 'Users' }],
-  driverInfo:[{ type: Schema.Types.ObjectId, ref: 'Users' }],
+  passengerInfo:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
+  driverInfo:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
   },{
     timestamps: true
   });

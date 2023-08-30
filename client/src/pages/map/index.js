@@ -18,19 +18,25 @@ const URL = 'http://localhost:4000';
 
 export const socket = io(URL);
 export default function index() {
-
+  const [newRide, setNewRide] = useState({})
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
   const [currentPosition, setCurrentPosition] = useState({})
   useEffect(() => {
     socket.on('connection');
   }, []);
 
+  // useEffect(() => {
+  //  socket.on('rideDetails',(rideDetails)=> {
+  //    set
+  //  })
+  // })
   const [mapWidth, setMatWidth] = useState('70vw')
   const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
   useEffect(() => {
     navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
   }, [])
   const dispatch = useDispatch()
+  const [selectedVehicle, setSelectedVehicle] = useState('bike')
   const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
   const containerStyle = {
     width: mapWidth,
@@ -331,8 +337,7 @@ export default function index() {
   ];
   //for map and simple card
 
-  const [isEdit, setIsEdit] = useState(false)
-  const [selectedVehicle, setSelectedVehicle] = useState('bike')
+
   // const handlePickUpChange = ()=> {
   //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
   // }

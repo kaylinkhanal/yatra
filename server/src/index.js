@@ -1,7 +1,7 @@
 const express = require('express')
 require('dotenv').config()
 const connection = require('./db/connection')
-
+const Rides = require('./models/rides')
 const cors = require('cors')
 const userRoute=require('./routes/users')
 
@@ -27,8 +27,9 @@ app.use("/",userRoute)
 io.on('connection', (socket) => {
 
  
-    socket.on('rideDetails', (rideDetails) => {
-      console.log(rideDetails);
+    socket.on('rideDetails', async(rideDetails) => {
+     await Rides.create(rideDetails)
+      io.emit('rideDetails', rideDetails)
     });
 
 
