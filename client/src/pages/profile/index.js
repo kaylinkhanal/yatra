@@ -8,13 +8,13 @@ import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import CustomForm from '@/components/CustomForm'
 const SignupSchema = Yup.object().shape({
-  currentPassword: Yup.string()
-    .required('Required'),
+  currentPassword: Yup.string().required('Required'),
   newPassword: Yup.string()
-    .min(2, 'Password too short!')
+    .min(8, 'Password must be at least 8 characters long!')
+    .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
     .required('Required'),
   confirmNewPassword: Yup.string()
-    .min(2, 'Password too short!')
+    .min(8, 'Password must be at least 8 characters long!')
     .required('Required')
     .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
 });

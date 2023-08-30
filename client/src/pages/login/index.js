@@ -40,6 +40,10 @@ const Login = () => {
     const LoginSchema = Yup.object().shape({
       phoneNumber: Yup.string().required('Required'),
       password: Yup.string().required('Required')
+      .min(8, 'Password must be at least 8 characters long!')
+      .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
+      .required('Required')
+
     });
     return(
         <>
