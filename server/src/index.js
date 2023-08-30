@@ -28,8 +28,9 @@ io.on('connection', (socket) => {
 
  
     socket.on('rideDetails', async(rideDetails) => {
-     await Rides.create(rideDetails)
-      io.emit('rideDetails', rideDetails)
+      await Rides.create(rideDetails)
+      const data =await Rides.find({rideStatus: "pending"})
+      io.emit('rideDetails', data) 
     });
 
 

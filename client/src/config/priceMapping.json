@@ -1,15 +1,15 @@
 {
-    "car": {
+    "Car": {
         "pricePerUnitKm": 200,
         "basePrice":  100,
         "nightPricePercentile": 0.1
     },
-    "bike": {
+    "Bike": {
         "pricePerUnitKm": 50,
         "basePrice":  100,
         "nightPricePercentile": 0.2
     },
-    "boat": {
+    "Boat": {
         "pricePerUnitKm": 500,
         "basePrice":  200,
         "nightPricePercentile": 0.5

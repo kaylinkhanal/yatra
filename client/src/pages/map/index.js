@@ -17,26 +17,42 @@ import { io } from 'socket.io-client';
 const URL = 'http://localhost:4000';
 
 export const socket = io(URL);
+
+const RideList = (props) => {
+  return (
+    <div>
+      {props.newRideList.length>0 && props.newRideList.map(item=>{
+        return (
+          <div style={{backgroundColor:'red', padding:'30px'}}>
+           <p>{item.pickUpAddr}</p> 
+            <p>{item.dropAddr}</p>
+            </div>
+        )
+      })}
+
+    </div>
+  )
+}
 export default function index() {
-  const [newRide, setNewRide] = useState({})
+  const [newRideList, setNewRideList] = useState({})
   const [currentPositionDrop, setCurrentPositionDrop] = useState({})
   const [currentPosition, setCurrentPosition] = useState({})
   useEffect(() => {
     socket.on('connection');
   }, []);
 
-  // useEffect(() => {
-  //  socket.on('rideDetails',(rideDetails)=> {
-  //    set
-  //  })
-  // })
+  useEffect(() => {
+   socket.on('rideDetails',(rideDetails)=> {
+    setNewRideList(rideDetails)
+   })
+  })
   const [mapWidth, setMatWidth] = useState('70vw')
   const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
   useEffect(() => {
     navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
   }, [])
   const dispatch = useDispatch()
-  const [selectedVehicle, setSelectedVehicle] = useState('bike')
+  const [selectedVehicle, setSelectedVehicle] = useState('Bike')
   const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
   const containerStyle = {
     width: mapWidth,
@@ -82,8 +98,8 @@ export default function index() {
         }}
         icon={<CommentOutlined />}
       >
-        <FloatButton onClick={() => props.setSelectedVehicle('car')} icon={<CarTwoTone />} />
-        <FloatButton onClick={() => props.setSelectedVehicle('bike')} icon={<CommentOutlined />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('Car')} icon={<CarTwoTone />} />
+        <FloatButton onClick={() => props.setSelectedVehicle('Bike')} icon={<CommentOutlined />} />
       </FloatButton.Group>
     </>
   );
@@ -98,7 +114,7 @@ export default function index() {
     const dropRef = useRef(null);
     const [isEdit, setIsEdit] = useState(false)
     const [isBargained, setIsBargained] = useState(false)
-    const [selectedVehicle, setSelectedVehicle] = useState('bike')
+    const [selectedVehicle, setSelectedVehicle] = useState('Bike')
     // const handlePickUpChange = ()=> {
     //   dispatch(setAddress({inputField: pickUpRef.current.value, flag:'pickUpAddr'}))
     // }
@@ -114,7 +130,7 @@ export default function index() {
     // }
 
  
-    const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
+    const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle]
     const generateCenter = () => {
       if (pickUpCords.lat) {
         return pickUpCords
@@ -149,8 +165,10 @@ export default function index() {
         bargainedPrice: estimatedPrice,
         distance,
         estimatedPrice: fixedEstimatedPrice,
-        passenger: userDetails._id
+        passenger: userDetails._id,
+        vehicleType: selectedVehicle
       }
+      debugger;
       socket.emit("rideDetails", rideDetails);
 
     }
@@ -268,7 +286,7 @@ export default function index() {
         <>
           <div className=' grid grid-cols-10 '>
             <div className='h-screen bg-white col-span-3'>
-              {userDetails.mode !== 'Driver' ? <UserRideForm/> : "hello"}
+              {userDetails.mode !== 'Driver' ? <UserRideForm/> : <RideList newRideList={newRideList} />}
             </div>
             <div className='col-span-7'>
               <div style={{ display: "flex", gap: '2rem' }}>
@@ -349,7 +367,7 @@ export default function index() {
   // const handleDestChange = ()=> {
   //   dispatch(setAddress({inputField: destRef.current.value, flag:'dropAddr'}))
   // }
-  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle.toLowerCase()]
+  const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle]
   const generateCenter = () => {
     if (pickUpCords.lat) {
       return pickUpCords
