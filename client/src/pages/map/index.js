@@ -38,11 +38,7 @@ export default function index() {
   useEffect(() => {
     socket.on('connection');
   }, []);
-  useEffect(() => {
-    socket.on('rideDetails', (rideDetails) => {
-      setNewRideList(rideDetails)
-    })
-  })
+
   const dispatch = useDispatch()
   const { userDetails } = useSelector(state => state.users)
   const userLogout = () => {
@@ -109,7 +105,6 @@ export default function index() {
       }
     }
     const handleDropEnd = (e) => {
-      debugger;
       const { lat, lng } = e.latLng
       const dropCords = { lat: lat(), lng: lng() }
       fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
@@ -119,22 +114,7 @@ export default function index() {
       setCurrentPositionDrop(dropCords)
       dispatch(setDropCords(dropCords))
     }
-    const handleRideRequest = () => {
-      const rideDetails = {
-        dropAddr,
-        dropCords,
-        pickUpAddr,
-        pickUpCords,
-        bargainedPrice: estimatedPrice,
-        distance,
-        estimatedPrice: fixedEstimatedPrice,
-        passenger: userDetails._id,
-        vehicleType: selectedVehicle
-      }
-      debugger;
-      socket.emit("rideDetails", rideDetails);
 
-    }
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
@@ -147,6 +127,21 @@ export default function index() {
     }
 
     const UserRideForm = () => {
+
+      const handleRideRequest = () => {
+        const rideDetails = {
+          dropAddr,
+          dropCords,
+          pickUpAddr,
+          pickUpCords,
+          bargainedPrice: estimatedPrice,
+          distance,
+          estimatedPrice: fixedEstimatedPrice,
+          passenger: userDetails._id,
+          vehicleType: selectedVehicle
+        }
+        socket.emit("rideDetails", rideDetails);
+      }
       return (
         <div>
           <div className='flex justify-center'>
@@ -212,8 +207,8 @@ export default function index() {
                       >- 10</button>
 
                       <div className='flex gap-1 hover:cursor-pointer '>
-                        NPR
-                        <div className={styles.offer_input} onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div>
+                        <span className='text-xl mt-1 text-green-500'>NPR</span>
+                        <div className='text-xl mt-1 text-green-500' onBlur={handleSetChangePrice} contentEditable={isEdit}>{estimatedPrice} </div>
                       </div>
 
                       <button onClick={() => {
@@ -224,12 +219,9 @@ export default function index() {
                   </div>
 
                 </div>
-                <div className='bg-black text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5'>
-                  <button
-                    onClick={handleRideRequest}
-                    className='text-black px-3 py-1  rounded-lg bg-black text-white border-2 hover:border-red-700'
-                  >Proceed</button>
-                </div>
+                <button className='bg-black block text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5' onClick={handleRideRequest}>
+                  Proceed
+                </button>
               </div>
               <div>
               </div>
