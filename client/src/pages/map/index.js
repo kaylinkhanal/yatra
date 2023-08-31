@@ -300,11 +300,19 @@ export default function index() {
                       <MarkerF
                         draggable={true}
                         onDragEnd={handleDragEnd}
+                        icon={{
+                          url: 'https://cdn-icons-png.flaticon.com/512/1090/1090806.png',
+                          scaledSize: new google.maps.Size(40, 40),
+                        }}
                         onLoad={onLoad}
                         position={pickUpCords}
                       />
                       <MarkerF
                         onDragEnd={handleDragEndDest}
+                        icon={{
+                          url: 'https://cdn-icons-png.flaticon.com/512/8619/8619999.png',
+                          scaledSize: new google.maps.Size(50, 50),
+                        }}
                         // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
                         onLoad={onLoad}
                         draggable={true}
