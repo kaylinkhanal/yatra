@@ -157,6 +157,10 @@ export default function index() {
                 {formStep === 1 && (
                   <MarkerF
                     onDragEnd={handleDragEnd}
+                    icon={{
+                      url: 'https://cdn-icons-png.flaticon.com/512/1090/1090806.png',
+                      scaledSize: new google.maps.Size(40, 40),
+                    }}
                     draggable={true}
                     onLoad={onLoad}
                     position={currentPosition.lat ? currentPosition : center}
@@ -166,6 +170,10 @@ export default function index() {
                   <MarkerF
                     onDragEnd={handleDragEndDest}
                     draggable={true}
+                    icon={{
+                      url: 'https://cdn-icons-png.flaticon.com/512/8619/8619999.png',
+                      scaledSize: new google.maps.Size(50, 50),
+                    }}
                     // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
                     onLoad={onLoad}
                     position={currentPositionDrop.lat ? currentPositionDrop : center}
