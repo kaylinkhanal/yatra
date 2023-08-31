@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styles from '../../styles/map.module.css'
 import { Avatar, Popover, Tabs } from 'antd';
-import { CommentOutlined, CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CommentOutlined, CarTwoTone, CustomerServiceOutlined, TwitterOutlined, CarOutlined, SmileOutlined, InfoCircleOutlined, UserOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
-
+import DOTTEDLINE from '../../../public/assets/dots-couple-with-a-vertical-line-union-svgrepo-com (3).svg'
 import priceMapping from '../../config/priceMapping.json'
 import { GoogleMap, useJsApiLoader, Autocomplete, MarkerF, Polyline } from '@react-google-maps/api';
 import { setAddress, setDropCords, setPickUpCords } from '../../redux/reducerSlice/rides'
@@ -14,18 +14,54 @@ import { handleLogout } from '../../redux/reducerSlice/users'
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { io } from 'socket.io-client';
+import Image from 'next/image';
 const URL = 'http://localhost:4000';
 
 export const socket = io(URL);
-
 const RideList = (props) => {
+  console.log(props, "hello")
   return (
-    <div>
+    <div className='flex flex-col gap-3'>
       {props.newRideList.length > 0 && props.newRideList.map(item => {
         return (
-          <div style={{ backgroundColor: 'red', padding: '30px' }}>
-            <p>{item.pickUpAddr}</p>
-            <p>{item.dropAddr}</p>
+          <div className='border-gray-400 border-2 m-4 px-2 py-4 rounded-lg'>
+            <div className='flex px-5 py-2 justify-around'>
+              <div>              <Avatar
+                size="large"
+                style={{
+                  backgroundColor: '#fde3cf',
+                  color: '#f56a00',
+                  fontSize: '1.5rem',
+                  marginRight: '2rem',
+                }}
+              >
+                {"A"}
+              </Avatar>
+                <span className='mt-2'>John Doe</span></div>
+              <div className='flex gap-3'>
+                <button className='bg-black px-3 rounded-[5px] mt-2 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white  '>Accept</button>
+                <button className='bg-black px-3 rounded-[5px] mt-2 text-center hover:bg-[#db4f45] transition ease-in-out duration-300 text-white  '>Decline</button>
+              </div>
+            </div>
+            <hr></hr>
+            <div className='px-24 py-2'>
+              <div className='text-green-600'>Offered Price:{item.bargainedPrice}</div>
+              {item.bargainedPrice !== item.estimatedPrice ? <div className='text-red-600'><InfoCircleOutlined className='relative bottom-1 mr-1  ' />
+                Estimated Price: Rs {item.estimatedPrice}</div> : null}
+            </div>
+            <div className=' flex'>
+              <div className='flex flex-col justify-center relative left-3'>
+                {item.distance / 1000}km
+              </div>
+              <div className=''>
+                <Image src={DOTTEDLINE} alt="Picture of the author" width={70} />
+              </div>
+              <div className='flex flex-col justify-around'>
+                <div>{item.pickUpAddr?.split(',')[0]}</div>
+                <hr></hr>
+                <div>{item.dropAddr?.split(',')[0]}</div>
+              </div>
+            </div>
           </div>
         )
       })}
@@ -34,10 +70,6 @@ const RideList = (props) => {
   )
 }
 export default function index() {
-  const [newRideList, setNewRideList] = useState({})
-  useEffect(() => {
-    socket.on('connection');
-  }, []);
 
   const dispatch = useDispatch()
   const { userDetails } = useSelector(state => state.users)
@@ -46,15 +78,34 @@ export default function index() {
   }
   const profileButtonContent = (
     <div>
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
+      <Link href="/profile" className='block hover:text-green-500'>Profile</Link>
+      <Link href="/" onClick={userLogout} className='block hover:text-red-500'>Logout</Link>
     </div>
   );
   const MapView = () => {
+    const [newRideList, setNewRideList] = useState({})
+    useEffect(() => {
+      socket.on('connection')
+    }, []);
+    useEffect(() => {
+      socket.on('rideDetails', (rideDetails) => {
+        setNewRideList(rideDetails)
+      })
+    })
     const [currentPositionDrop, setCurrentPositionDrop] = useState({})
     const [currentPosition, setCurrentPosition] = useState({})
+    const [isMapDraggable, setIsMapDraggable] = useState(true)
+    const handleMapDrag = () => {
+      if (userDetails.mode == "Driver") {
+        setIsMapDraggable(false);
+      }
+      else {
+        return setIsMapDraggable(true)
+      }
+    }
     useEffect(() => {
       navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+      handleMapDrag()
     }, [])
     const { dropAddr, dropCords, pickUpAddr, pickUpCords } = useSelector(state => state.rides)
     const { userDetails } = useSelector(state => state.users)
@@ -70,10 +121,11 @@ export default function index() {
     const { isLoaded } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
     const mapContainerStyle = { width: '70vw', height: '95vh' };
     const { pricePerUnitKm, basePrice, nightPricePercentile } = priceMapping[selectedVehicle]
-
     const initialPrice = (pricePerUnitKm * (distance / 1000)) + basePrice
     const [estimatedPrice, setEstimatedPrice] = useState(Math.ceil(initialPrice))
     const [fixedEstimatedPrice, setFixedEstimatedPrice] = useState(Math.ceil(initialPrice))
+    const [isActivelyRequestingRide, setIsActivelyRequestingRide] = useState(false)
+
     const handleSetChangePrice = (e) => {
       const estPrice = Number(e.target.textContent)
       if (estPrice > (estimatedPrice - 50)) {
@@ -83,10 +135,14 @@ export default function index() {
       }
       setIsBargained(true)
     }
+
     useEffect(() => {
       setEstimatedPrice(Math.ceil(initialPrice))
       setFixedEstimatedPrice(Math.ceil(initialPrice))
     }, [selectedVehicle])
+    useEffect(() => {
+      setIsActivelyRequestingRide(false)
+    }, [distance])
     const handlePickUpEnd = (e) => {
       const { lat, lng } = e.latLng
       const pickUpCords = { lat: lat(), lng: lng() }
@@ -127,20 +183,27 @@ export default function index() {
     }
 
     const UserRideForm = () => {
-
-      const handleRideRequest = () => {
-        const rideDetails = {
-          dropAddr,
-          dropCords,
-          pickUpAddr,
-          pickUpCords,
-          bargainedPrice: estimatedPrice,
-          distance,
-          estimatedPrice: fixedEstimatedPrice,
-          passenger: userDetails._id,
-          vehicleType: selectedVehicle
+      const handleRideRequest = (request) => {
+        if (request == 'request') {
+          setIsActivelyRequestingRide(true)
+          const rideDetails = {
+            dropAddr,
+            dropCords,
+            pickUpAddr,
+            pickUpCords,
+            bargainedPrice: estimatedPrice,
+            distance,
+            estimatedPrice: fixedEstimatedPrice,
+            passenger: userDetails._id,
+            vehicleType: selectedVehicle
+          }
+            ;
+          socket.emit("rideDetails", rideDetails);
         }
-        socket.emit("rideDetails", rideDetails);
+        else if (request == 'cancel') {
+          setIsActivelyRequestingRide(false)
+        }
+
       }
       return (
         <div>
@@ -219,9 +282,15 @@ export default function index() {
                   </div>
 
                 </div>
-                <button className='bg-black block text-white rounded-lg py-2 px-16  w-10 hover:bg-[#7ABD1F] transition ease-in-out duration-300  flex justify-center mt-5' onClick={handleRideRequest}>
-                  Proceed
-                </button>
+                <div className=''>
+                  {!isActivelyRequestingRide ? <button
+                    onClick={() => handleRideRequest('request')}
+                    className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]'
+                  >Request Ride</button> : <button
+                    onClick={() => handleRideRequest('cancel')}
+                    className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]'
+                  >Cancel Ride</button>}
+                </div>
               </div>
               <div>
               </div>
@@ -236,7 +305,7 @@ export default function index() {
         <>
           <div className=' grid grid-cols-10 '>
             <div className='h-screen bg-white col-span-3'>
-              <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="Bike" items={[
+              {userDetails.mode !== "Driver" ? <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="Bike" items={[
                 {
                   key: 'Bike',
                   label: <span>Bike <TwitterOutlined /></span>,
@@ -253,8 +322,9 @@ export default function index() {
                 },
               ]} style={{
                 background: 'white',
-              }} centered={true} />
+              }} centered={true} /> : null}
               {userDetails.mode !== 'Driver' ? <UserRideForm /> : <RideList newRideList={newRideList} />}
+              {/* {userDetails.mode !== 'Driver' ? <UserRideForm /> : <div>{JSON.stringify(newRideList)}</div>} */}
             </div>
             <div className='col-span-7'>
               <div style={{ display: "flex", gap: '2rem' }}>
@@ -266,7 +336,7 @@ export default function index() {
                       zoom={13}
                     >
                       <MarkerF
-                        draggable={true}
+                        draggable={isMapDraggable}
                         onDragEnd={handlePickUpEnd}
                         onLoad={onLoad}
                         position={pickUpCords}
@@ -275,7 +345,7 @@ export default function index() {
                         onDragEnd={handleDropEnd}
                         // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
                         onLoad={onLoad}
-                        draggable={true}
+                        draggable={isMapDraggable}
                         position={dropCords}
                       />
                       {/* <FloatBtn /> */}

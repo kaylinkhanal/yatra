@@ -12,9 +12,9 @@ import { useRouter } from 'next/router'
 
 
 export default function index() {
-  const [formStep, setFormStep] = useState(1)
+
   const [tabId, setTabId] = useState(1)
-  const tabItems = [
+  const items = [
     {
       key: 1,
       label: `Passenger mode`,
@@ -25,25 +25,53 @@ export default function index() {
     },
   ];
 
+
+
+
   const onChange = (key) => {
     setTabId(key)
   };
   const UserCard = () => {
-    const dispatch = useDispatch()
-
-    const mapContainerStyle = {
-      width: '400px',
-      height: '400px'
-    };
-    const center = { "lat": 27.6854872, "lng": 85.3447924 }
     const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
+    const [formStep, setFormStep] = useState(1)
     const [currentPosition, setCurrentPosition] = useState({})
     const [currentPositionDrop, setCurrentPositionDrop] = useState({})
-    const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
+    const router = useRouter;
+
+
 
     useEffect(() => {
       navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
     }, [])
+    const dispatch = useDispatch()
+    const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
+    const containerStyle = {
+      width: '400px',
+      height: '400px'
+    };
+
+    const center = { "lat": 27.6854872, "lng": 85.3447924 }
+    const handleDragEnd = (e) => {
+      const { lat, lng } = e.latLng
+      const pickUpCords = { lat: lat(), lng: lng() }
+      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${pickUpCords.lat}&lon=${pickUpCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
+        .then(res => res.json())
+        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'pickUpAddr' }))
+        )
+      setCurrentPosition(pickUpCords)
+      dispatch(setPickUpCords(pickUpCords))
+    }
+
+    const handleDragEndDest = (e) => {
+      const { lat, lng } = e.latLng
+      const dropCords = { lat: lat(), lng: lng() }
+      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
+        .then(res => res.json())
+        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'dropAddr' }))
+        )
+      setCurrentPositionDrop(dropCords)
+      dispatch(setDropCords(dropCords))
+    }
     const pickUpRef = useRef(null);
     const dropRef = useRef(null);
 
@@ -54,41 +82,20 @@ export default function index() {
       dispatch(setAddress({ inputField: dropRef.current.value, flag: 'dropAddr' }))
     }
     const generateCenter = () => {
-      if (formStep === 1 && pickUpCords) {
-        return pickUpCords
-      } else if (formStep === 2 && dropCords) {
-        return dropCords
+      if (formStep === 1 && currentPosition.lat) {
+        return currentPosition
+      } else if (formStep === 2 && currentPositionDrop.lat) {
+        return currentPositionDrop
       } else {
         return center
       }
     }
+
     const onLoad = marker => {
       console.log('marker: ', marker)
     }
-    const handlePickUpEnd = (e) => {
-      const { lat, lng } = e.latLng
-      const pickUpCords = { lat: lat(), lng: lng() }
-      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${pickUpCords.lat}&lon=${pickUpCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
-        .then(res => res.json())
-        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'pickUpAddr' }))
-        )
-      setCurrentPosition(pickUpCords)
-      dispatch(setPickUpCords(pickUpCords))
-      debugger
-    }
-
-    const handleDropEnd = (e) => {
-      const { lat, lng } = e.latLng
-      const dropCords = { lat: lat(), lng: lng() }
-      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
-        .then(res => res.json())
-        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'dropAddr' }))
-        )
-      setCurrentPositionDrop(dropCords)
-      dispatch(setDropCords(dropCords))
-    }
-    const InputForm = () => {
-      return (
+    return (
+      <div style={{ display: "flex", gap: '2rem' }}>
         <div className='pr-4'>
           <h2 className='font-bold  mt-2 leading-[60px]'>Let's begin our  <br /> <span className='text-[#79BE1D] font-bold'> Yatra</span> together </h2>
           <>
@@ -112,17 +119,18 @@ export default function index() {
 
             {isLoaded && formStep == 2 && (
               <>
-                <Autocomplete
-                  className='mt-7 py-[15px] px-[10px] w-full border hover:border-[#79BE1D] rounded-[20px]  '
-                  onPlaceChanged={handleDestChange}
-                  key={2}>
-                  <input type='text'
-                    className='w-full outline-none'
-                    ref={dropRef}
-                    defaultValue={dropAddr}
-                    // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
-                    placeholder='Destination address' />
-                </Autocomplete>
+                <form>
+                  <Autocomplete
+                    onPlaceChanged={handleDestChange}
+                    key={2}>
+                    <input type='text'
+                      className='mt-7  w-full border hover:border-[#79BE1D] rounded-[20px]'
+                      ref={dropRef}
+                      defaultValue={dropAddr}
+                      // onChange={(e) => dispatch(setAddress({ inputField: e.target.value, flag: 'dropAddr' }))}
+                      placeholder='Destination address' />
+                  </Autocomplete>
+                </form>
                 <div className='flex gap-10'>
                   <button className='bg-black px-8 rounded-[20px] mt-6 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white py-[15px]' onClick={() => setFormStep(1)}>Previous</button>
                   {formStep == 2 ? <Link href={'/map'} className='m-0 p-0'>
@@ -131,40 +139,40 @@ export default function index() {
                 </div>
               </>
             )}
+
           </>
+
         </div>
-      )
-    }
-    return (
-      <div style={{ display: "flex", gap: '2rem' }}>
-        <div><InputForm></InputForm></div>
         <div>
           {isLoaded ? (
             <>
+
+
               <GoogleMap
-                mapContainerStyle={mapContainerStyle}
+                mapContainerStyle={containerStyle}
                 center={generateCenter()}
                 zoom={14}
               >
                 {formStep === 1 && (
                   <MarkerF
-                    onDragEnd={handlePickUpEnd}
+                    onDragEnd={handleDragEnd}
                     draggable={true}
                     onLoad={onLoad}
-                    // position={currentPosition.lat ? currentPosition : center}
-                    position={pickUpCords}
+                    position={currentPosition.lat ? currentPosition : center}
                   />
                 )}
                 {formStep === 2 && (
                   <MarkerF
-                    onDragEnd={handleDropEnd}
+                    onDragEnd={handleDragEndDest}
                     draggable={true}
                     // icon={"https://web.archive.org/web/20230701011019/https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"}
                     onLoad={onLoad}
-                    // position={currentPositionDrop.lat ? currentPositionDrop : center}
-                    position={dropCords}
+                    position={currentPositionDrop.lat ? currentPositionDrop : center}
                   />
                 )}
+
+
+                { /* Child components, such as markers, info windows, etc. */}
                 <></>
               </GoogleMap>
             </>
@@ -177,6 +185,7 @@ export default function index() {
       </div>
     )
   }
+
   const DriverCard = () => {
     return (
       <div className='py-5'>
@@ -194,7 +203,7 @@ export default function index() {
       <section className='hero' style={{ backgroundImage: `linear-gradient(to bottom, rgba(245, 246, 252, 0.52), rgba(122, 189, 31, 0.73)),url(${Heroimg.src})` }}>
         <div className='container'>
           <div className='request--box'>
-            <Tabs defaultActiveKey={1} items={tabItems} onChange={onChange} />
+            <Tabs defaultActiveKey={1} items={items} onChange={onChange} />
             {tabId == 1 ? <UserCard /> : <DriverCard />}
           </div>
         </div>
