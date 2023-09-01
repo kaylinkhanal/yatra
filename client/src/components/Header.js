@@ -17,8 +17,8 @@ export default function Header() {
   const content = (
     <div>
 
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
+      <Link href="/profile" className='block hover:text-green-500'>Profile</Link>
+      <Link href="/" onClick={userLogout} className='block hover:text-red-500'>Logout</Link>
     </div>
   );
 
