@@ -72,7 +72,7 @@ export default function index() {
   }
 
   const handleDragEndDest = (e) => {
-    debugger;
+    // debugger;
     const { lat, lng } = e.latLng
     const dropCords = { lat: lat(), lng: lng() }
     fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
@@ -280,11 +280,11 @@ export default function index() {
       )
     }
 
-
+    let polyCords = [pickUpCords,dropCords]
     return (
       <div>
         <>
-          <div className=' grid grid-cols-10 '>
+        <div className=' grid grid-cols-10 '>
             <div className='h-screen bg-white col-span-3'>
               {userDetails.mode !== 'Driver' ? <UserRideForm/> : <RideList newRideList={newRideList} />}
             </div>
@@ -302,6 +302,14 @@ export default function index() {
                         onDragEnd={handleDragEnd}
                         onLoad={onLoad}
                         position={pickUpCords}
+                      />
+                      <Polyline
+                        path={polyCords}
+                        options={{
+                          strokeColor: "#000",
+                          strokeOpacity: 0.75,
+                          strokeWeight: 5
+                        }}
                       />
                       <MarkerF
                         onDragEnd={handleDragEndDest}
@@ -424,6 +432,3 @@ export default function index() {
     </>
   )
 }
-
-
-
