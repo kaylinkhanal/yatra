@@ -26,5 +26,5 @@ router.post('/login', UsersController.loginUser)
 router.get('/users', UsersController.getAllUsers)
 router.put('/users/:id', UsersController.changeUserDetails)
 router.delete('/delete-user/:id', UsersController.deleteUser)
-
+router.delete('/delete-account/:id',UsersController.deleteAccount)
 module.exports = router;

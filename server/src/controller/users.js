@@ -168,10 +168,37 @@ const deleteUser = async (req, res) => {
     }
 
 }
+//Delete Account by user
+const deleteAccount = async(req,res) =>{
+    try{
+        userId = req.params.id;
+        const data = await Users.findById(userId)
+        if(data){
+            const isMatched = await bcrypt.compare(req.body.password,data.password)
+            if(!isMatched){
+                res.status(401).json({
+                    msg: "Incorrect password",
+                    accountDelete: false,
+                })}
+                else{
+                await Users.findByIdAndDelete(req.params.id)
+              
+                res.status(200).json({
+                    msg: "Account Deleted Successfully",
+                    accoutnDelete: true,
+                })
+            }
+            }
+        }
+    catch(err){
+        console.log(err)
+    }
+}
 
 
 
 
 
 
-module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers, deleteUser}
+
+module.exports = { registerUser, loginUser, changePassword, changeUserDetails,verifyUserDetails,getLicenseImgById ,getAllUsers, deleteUser,deleteAccount}
