@@ -41,7 +41,11 @@ export default function index() {
 
 
     useEffect(() => {
-      navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+      try{
+        navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+      }catch(err){
+        console.log(err)
+      }
     }, [])
     const dispatch = useDispatch()
     const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })

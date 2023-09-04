@@ -19,7 +19,6 @@ const URL = 'http://localhost:4000';
 
 export const socket = io(URL);
 const RideList = (props) => {
-  console.log(props, "hello")
   return (
     <div className='flex flex-col gap-3'>
       {props.newRideList.length > 0 && props.newRideList.map(item => {
@@ -37,10 +36,12 @@ const RideList = (props) => {
               >
                 {"A"}
               </Avatar>
-                <span className='mt-2'>John Doe</span></div>
+                <span className='mt-2'>{item.passenger.fullName}</span></div>
               <div className='flex gap-3'>
                 <button className='bg-black px-3 rounded-[5px] mt-2 text-center hover:bg-[#7ABD1F] transition ease-in-out duration-300 text-white  '>Accept</button>
-                <button className='bg-black px-3 rounded-[5px] mt-2 text-center hover:bg-[#db4f45] transition ease-in-out duration-300 text-white  '>Decline</button>
+                <button
+                onClick={()=> props.removeRides(item._id)}
+                className='bg-black px-3 rounded-[5px] mt-2 text-center hover:bg-[#db4f45] transition ease-in-out duration-300 text-white  '>Decline</button>
               </div>
             </div>
             <hr></hr>
@@ -84,14 +85,30 @@ export default function index() {
   );
   const MapView = () => {
     const [newRideList, setNewRideList] = useState({})
+    const fetchRides = async (page = 1, size = 10) => {
+      const res = await fetch(`http://localhost:4000/rides`)
+      const data = await res.json()
+      setNewRideList(data.rideList)
+  }
     useEffect(() => {
+      fetchRides()
       socket.on('connection')
+
     }, []);
     useEffect(() => {
       socket.on('rideDetails', (rideDetails) => {
         setNewRideList(rideDetails)
+  
       })
     })
+    const removeRides=(removeId)=> {
+      const existingRides = [...newRideList]
+      debugger;
+      const updatedList=  existingRides.filter((item)=>item._id !== removeId)
+      setNewRideList(updatedList)
+    }
+    
+    
     const [currentPositionDrop, setCurrentPositionDrop] = useState({})
     const [currentPosition, setCurrentPosition] = useState({})
     const [isMapDraggable, setIsMapDraggable] = useState(true)
@@ -104,7 +121,11 @@ export default function index() {
       }
     }
     useEffect(() => {
-      navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+      try{
+        navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+      }catch(err){
+        console.log(err)
+      }
       handleMapDrag()
     }, [])
     const { dropAddr, dropCords, pickUpAddr, pickUpCords } = useSelector(state => state.rides)
@@ -300,6 +321,8 @@ export default function index() {
 
       )
     }
+
+ 
     return (
       <div>
         <>
@@ -323,7 +346,9 @@ export default function index() {
               ]} style={{
                 background: 'white',
               }} centered={true} /> : null}
-              {userDetails.mode !== 'Driver' ? <UserRideForm /> : <RideList newRideList={newRideList} />}
+              {userDetails.mode !== 'Driver' ? <UserRideForm /> : <RideList
+              removeRides= {removeRides}
+              newRideList={newRideList} />}
               {/* {userDetails.mode !== 'Driver' ? <UserRideForm /> : <div>{JSON.stringify(newRideList)}</div>} */}
             </div>
             <div className='col-span-7'>
