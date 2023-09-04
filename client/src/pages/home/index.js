@@ -12,25 +12,7 @@ import { useRouter } from 'next/router'
 
 
 export default function index() {
-  const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
-  const [formStep, setFormStep] = useState(1)
-  const [currentPosition, setCurrentPosition] = useState({})
-  const [currentPositionDrop, setCurrentPositionDrop] = useState({})
-  const router = useRouter;
 
-
-
-  useEffect(() => {
-    navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
-  }, [])
-  const dispatch = useDispatch()
-  const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
-  const containerStyle = {
-    width: '400px',
-    height: '400px'
-  };
-
-  const center = { "lat": 27.6854872, "lng": 85.3447924 }
   const [tabId, setTabId] = useState(1)
   const items = [
     {
@@ -43,34 +25,53 @@ export default function index() {
     },
   ];
 
-  const handleDragEnd = (e) => {
-    const { lat, lng } = e.latLng
-    const pickUpCords = { lat: lat(), lng: lng() }
-    fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${pickUpCords.lat}&lon=${pickUpCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
-      .then(res => res.json())
-      .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'pickUpAddr' }))
-      )
-    setCurrentPosition(pickUpCords)
-    dispatch(setPickUpCords(pickUpCords))
-  }
 
-  const handleDragEndDest = (e) => {
-    debugger;
-    const { lat, lng } = e.latLng
-    const dropCords = { lat: lat(), lng: lng() }
-    fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
-      .then(res => res.json())
-      .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'dropAddr' }))
-      )
-    setCurrentPositionDrop(dropCords)
-    dispatch(setDropCords(dropCords))
-  }
 
 
   const onChange = (key) => {
     setTabId(key)
   };
   const UserCard = () => {
+    const { pickUpAddr, pickUpCords, dropAddr, dropCords } = useSelector(state => state.rides)
+    const [formStep, setFormStep] = useState(1)
+    const [currentPosition, setCurrentPosition] = useState({})
+    const [currentPositionDrop, setCurrentPositionDrop] = useState({})
+    const router = useRouter;
+
+
+
+    useEffect(() => {
+      navigator?.geolocation?.getCurrentPosition(position => setCurrentPosition({ lat: position.coords.latitude, lng: position.coords.longitude }))
+    }, [])
+    const dispatch = useDispatch()
+    const { isLoaded, loadError } = useJsApiLoader({ libraries: ['places'], googleMapsApiKey: "AIzaSyDLfjmFgDEt9_G2LXVyP61MZtVHE2M3H-0" })
+    const containerStyle = {
+      width: '400px',
+      height: '400px'
+    };
+
+    const center = { "lat": 27.6854872, "lng": 85.3447924 }
+    const handleDragEnd = (e) => {
+      const { lat, lng } = e.latLng
+      const pickUpCords = { lat: lat(), lng: lng() }
+      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${pickUpCords.lat}&lon=${pickUpCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
+        .then(res => res.json())
+        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'pickUpAddr' }))
+        )
+      setCurrentPosition(pickUpCords)
+      dispatch(setPickUpCords(pickUpCords))
+    }
+
+    const handleDragEndDest = (e) => {
+      const { lat, lng } = e.latLng
+      const dropCords = { lat: lat(), lng: lng() }
+      fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${dropCords.lat}&lon=${dropCords.lng}&apiKey=a1dd45a7dfc54f55a44b69d125722fcb`)
+        .then(res => res.json())
+        .then(data => dispatch(setAddress({ inputField: data.features[0].properties.formatted, flag: 'dropAddr' }))
+        )
+      setCurrentPositionDrop(dropCords)
+      dispatch(setDropCords(dropCords))
+    }
     const pickUpRef = useRef(null);
     const dropRef = useRef(null);
 
@@ -91,8 +92,6 @@ export default function index() {
     }
 
     const onLoad = marker => {
-
-
       console.log('marker: ', marker)
     }
     return (
