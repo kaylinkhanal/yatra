@@ -12,9 +12,14 @@ const ridesSchema = new mongoose.Schema({
     default: 'pending'
   },
   distance: Number,
+  vehicleType: {
+    type: String,
+    enum : ['Bike','Car','Boat'],
+    default: 'Bike'
+  },
   estimatedPrice: Number,
-  passengerInfo:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
-  driverInfo:[{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }],
+  passenger:{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
+  driver:{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' },
   },{
     timestamps: true
   });

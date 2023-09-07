@@ -5,6 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRouter } from 'next/router';
 import { handleLogout } from '../redux/reducerSlice/users'
 import Link from 'next/link';
+import {
+  UserOutlined,
+  LoginOutlined ,
+}  from '@ant-design/icons';
 
 
 export default function Header() {
@@ -16,9 +20,8 @@ export default function Header() {
   const { isLoggedIn, userDetails } = useSelector(state => state.users)
   const content = (
     <div>
-
-      <Link href="/profile">Profile</Link>
-      <p onClick={userLogout}>Logout</p>
+      <Link href="/profile" className='py-1 w-100 hover:bg-gray-100 flex hover:text-black items-end text-base gap-2 ease-linear duration-300'><UserOutlined className='text-xl' />Profile</Link>
+      <Link href="/" onClick={userLogout} className='py-1 w-100 hover:bg-gray-100 flex hover:text-black items-end text-base gap-2 ease-linear duration-300'><LoginOutlined className='text-xl' />Logout</Link>
     </div>
   );
 
@@ -36,7 +39,7 @@ export default function Header() {
           {isLoggedIn ? (
             <div>
 
-              <Popover placement="bottom" title={userDetails.fullName} content={content} trigger="click">
+              <Popover placement="bottom" title={<div className='border-b border-black'>{userDetails.fullName}</div>} content={content} trigger="click">
 
                 <Avatar
                   size="large"
@@ -45,7 +48,8 @@ export default function Header() {
                     color: '#f56a00',
                     marginTop: '33px',
                     fontSize: '1.5rem',
-                    marginRight: '10px'
+                    marginRight: '10px',
+                    cursor: 'pointer'
                   }}
                 >
                   {userDetails?.fullName?.[0]}

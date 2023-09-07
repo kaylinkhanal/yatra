@@ -6,9 +6,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Col, Row, Avatar, Card, Image, Button, Space, Modal, message } from 'antd'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+import { useRouter } from 'next/navigation'
 import CustomForm from '@/components/CustomForm'
+import { handleLogout } from '../../redux/reducerSlice/users'
+import {
+EditOutlined,
+SettingOutlined,
+PaperClipOutlined,
+} from '@ant-design/icons';
 const SignupSchema = Yup.object().shape({
-  currentPassword: Yup.string().required('Required'),
+
   newPassword: Yup.string()
     .min(8, 'Password must be at least 8 characters long!')
     .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
@@ -18,6 +25,10 @@ const SignupSchema = Yup.object().shape({
     .required('Required')
     .oneOf([Yup.ref('newPassword'), null], 'Passwords must match'),
 });
+
+const deleteUserSchema = Yup.object().shape({
+  password: Yup.string().required('Required'),
+})
 
 const ChangePassForm = ({handleChangePassword}) => {
   return (
@@ -53,7 +64,33 @@ const ChangePassForm = ({handleChangePassword}) => {
   )
 }
 
-
+const DeleteAccountForm = ({handleDeleteAccount}) =>{
+  const dispatch = useDispatch()
+  const router = useRouter()
+  return(
+    <div>
+      <p className='text-base'>This will immediately delete all your credentials along with your user data.</p>
+      <p className='font-medium pt-5 text-base'>To confirm please enter your password</p>
+      <Formik
+      initialValues={{
+        password:'',
+      }}
+      validationSchema={deleteUserSchema}
+      onSubmit={(values) => handleDeleteAccount(values,router,dispatch)}>
+      {({ errors, touched }) => (
+          <Form>
+            <Field name="password" type="password" placeholder="Password" />
+            {errors.password && touched.password ? (
+              <div>{errors.password}</div>
+            ) : null}
+            <button type='submit' className='border-[1px] border-red-600 text-red-600 py-1 px-4 rounded-xl my-2 hover:bg-red-100 ease-in-out duration-300'>Confirm Delete Account</button>
+            <p className='text-red-700 py-2'>Warning! This action cannot be undone.</p>
+          </Form>
+      )}
+      </Formik>
+    </div>
+  )
+}
 
 
 export default function Profile() {
@@ -72,7 +109,7 @@ export default function Profile() {
 
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -100,7 +137,7 @@ export default function Profile() {
 
   const handleChangePassword = async(values) =>{
     const userId = userDetails._id;
-
+    
     const{confirmNewPassword,...formFields} = values
     const requestOptions ={
       method: 'POST',
@@ -117,20 +154,43 @@ export default function Profile() {
   }
   }
   
+  const handleDeleteAccount = async(values,router,dispatch) =>{
+    const userId = userDetails._id;
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values),
+    }
+  
+    const res = await fetch(`http://localhost:4000/delete-account/${userId}`,requestOptions)
+   
+    const data = await res.json()
+    if(data && res.status==200){
+
+    setIsDeleteModalOpen(false)
+    
+    msg.info(data.msg)
+    dispatch(handleLogout())
+    router.push('/')
+     
+    }else if(data && res.status==401){
+      msg.info(data.msg)
+    }
+  }
   return (
     <>
     {contextHolder}
       <Header />
       <section className='user--profile'>
-        <div className='container'>
-          <h2>Your Profile</h2>
-          <Row>
-            <Col span={12}>
+        <div className='container ps-[22px] pe-[10px]  py-[10px]'>   
+          <div className='flex gap-5 justify-center'>
+
               <Card
-                title="Avatar"
+                className='!shadow-md border-[#74C236] border-[2px]'
                 bordered={false}
                 style={{
-                  width: 300,
+                  width: 410,
+                  height: 353,
                 }}
               >
                 <Image
@@ -149,35 +209,35 @@ export default function Profile() {
                   </Button>
                 </Space>
               </Card>
-            </Col>
-            <Col span={12}>
-              <Card className="account--details"
-                title="Account Details"
-                extra={<span onClick={() => setIsAccountModalOpen(true)}>Edit Details</span>}
+              <div className='w-[100%]'>
+
+          
+              <Card className="account--details border-l-[20px] border-[#74C236]"
+                title={<div className='flex items-baseline gap-2'><PaperClipOutlined  className='text-2xl' />Account Details</div>}
+                extra={<span onClick={() => setIsAccountModalOpen(true)}><EditOutlined className='text-xl cursor-pointer' /></span>}
                 bordered={true}
-                style={{
-                  width: '100%',
-                }}
+              
               >
-                <p><span>Full Name: </span>{userDetails?.fullName}</p>
-                <p><span>Email: </span><a href={`mailto:${userDetails.email}`}>{userDetails.email}</a></p>
-                <p><span>Phone: </span>{userDetails.phoneNumber}</p>
+                <p className='text-base'><span>Full Name: </span>{userDetails?.fullName}</p>
+                <p className='text-base py-1'><span>Email: </span><a href={`mailto:${userDetails.email}`}>{userDetails.email}</a></p>
+                <p className='text-base'><span>Phone: </span>{userDetails.phoneNumber}</p>
               </Card>
-              <Card className="account--details"
-                title="Account Settings"
+
+              <Card className="account--details border-l-[20px] border-[#74C236]"
+                title={<div className='flex items-baseline gap-2'><SettingOutlined className='text-2xl' />Account Settings</div>}
                 bordered={true}
-                style={{
-                  width: '100%',
-                }}
               >
+             
                 <Space
                   direction="vertical"
                   style={{
-                    width: '50%',
-                    marginTop: '20px'
+                    width: '60%',
+                    marginTop: '10px'
                   }}
+            
                 >
-                  <Button type="primary" onClick={() => setIsModalOpen(true)}>
+                  <div className='flex gap-5'>
+                  <Button onClick={() => setIsModalOpen(true)}>
                     Change Password
                   </Button>
 
@@ -201,10 +261,19 @@ export default function Profile() {
                     onCancel={() => setIsModalOpen(false)} >
                     <ChangePassForm handleChangePassword={handleChangePassword} />
                   </Modal>
+                  <Button danger onClick={()=>setIsDeleteModalOpen(true)}>Delete Account</Button>
+                  <Modal
+                  footer={null}
+                  title={<h4 className='text-xl'>Are you sure you want to delete your account?</h4>}
+                  open={isDeleteModalOpen}
+                  onCancel={()=> setIsDeleteModalOpen(false)}>
+                  <DeleteAccountForm handleDeleteAccount={handleDeleteAccount}/>
+                  </Modal>
+                  </div>
                 </Space>
               </Card>
-            </Col>
-          </Row>
+              </div>
+          </div>
         </div>
       </section>
 
