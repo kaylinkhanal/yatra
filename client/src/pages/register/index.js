@@ -19,11 +19,13 @@ const Register = () => {
       .max(50, 'Too Long!')
       .required('Required'),
     password: Yup.string()
-      .min(5, 'Password Too Short!')
+    .min(8, 'Password must be at least 8 characters long!')
+      .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
       .required('Required'),
     confirmPassword: Yup.string()
-      .min(5, 'Password Too Short!')
-      .required('Required')
+    .min(8, 'Password must be at least 8 characters long!')
+    .matches(/^(?=.*?[!@#$%^&*])/, 'Password must contain at least one special character!')
+    .required('Required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
     email: Yup.string().email('Invalid email').required('Required'),
   });
