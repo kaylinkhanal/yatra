@@ -303,7 +303,7 @@ export default function index() {
     return (
       <div>
         <>
-          <div className=' grid grid-cols-10 '>
+        <div className=' grid grid-cols-10 '>
             <div className='h-screen bg-white col-span-3'>
               {userDetails.mode !== "Driver" ? <Tabs onChange={(text) => setSelectedVehicle(text)} defaultActiveKey="Bike" items={[
                 {
@@ -344,6 +344,14 @@ export default function index() {
                         }}
                         onLoad={onLoad}
                         position={pickUpCords}
+                      />
+                      <Polyline
+                        path={[pickUpCords,dropCords]}
+                        options={{
+                          strokeColor: "#000",
+                          strokeOpacity: 0.75,
+                          strokeWeight: 5
+                        }}
                       />
                       <MarkerF
                         onDragEnd={handleDropEnd}
@@ -402,6 +410,3 @@ export default function index() {
     </>
   )
 }
-
-
-
